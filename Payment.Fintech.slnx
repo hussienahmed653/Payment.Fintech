@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Payment.Fintech.Api/Payment.Fintech.Api.csproj" />
+  <Project Path="Payment.Fintech.Application/Payment.Fintech.Application.csproj" />
+  <Project Path="Payment.Fintech.Domain/Payment.Fintech.Domain.csproj" />
+  <Project Path="Payment.Fintech.Infrastructure/Payment.Fintech.Infrastructure.csproj" />
+  <Project Path="Shared/Shared.csproj" Id="f6110036-111b-4ed7-8b91-6dd76800787c" />
+</Solution>
