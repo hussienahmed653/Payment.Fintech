@@ -15,7 +15,11 @@ public class DeleteMerchantCommandHandler(IUnitOfWork unitOfWork,
                 return Result.Failure(MerchantErrors.MerchantNotFound);
 
             await _merchantRepository.DeleteMerchantAsync(merchant, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            var TotalChanges = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (TotalChanges == 0)
+                return Result.Failure<MerchantResponse>(MerchantErrors.ZeroRowsAffected);
+            if (TotalChanges > 1)
+                return Result.Failure<MerchantResponse>(MerchantErrors.MultibleRowsAffected);
             await _unitOfWork.CommitTransactionAsync(cancellationToken);
             return Result.Success();
         }

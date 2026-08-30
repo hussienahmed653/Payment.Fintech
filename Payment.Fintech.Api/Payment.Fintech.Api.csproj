@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Payment.Fintech.Application\Payment.Fintech.Application.csproj" />
     <ProjectReference Include="..\Payment.Fintech.Infrastructure\Payment.Fintech.Infrastructure.csproj" />
   </ItemGroup>
 

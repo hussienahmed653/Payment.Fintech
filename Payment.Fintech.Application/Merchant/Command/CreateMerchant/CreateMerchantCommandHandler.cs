@@ -1,13 +1,4 @@
-﻿using Mapster;
-using MediatR;
-using Microsoft.AspNetCore.Http;
-using Payment.Fintech.Application.Abstraction;
-using Payment.Fintech.Application.Common.Contracts.Merchants;
-using Payment.Fintech.Application.Common.Interfaces.Merchants;
-using Payment.Fintech.Application.Common.Interfaces.UnitOfWork;
-using Payment.Fintech.Domain.Errors;
-
-namespace Payment.Fintech.Application.Merchant.Command.CreateMerchant;
+﻿namespace Payment.Fintech.Application.Merchant.Command.CreateMerchant;
 
 public class CreateMerchantCommandHandler(IUnitOfWork unitOfWork, IMerchantRepository merchantRepository) : IRequestHandler<CreateMerchantCommand, Result<MerchantResponse>>
 {
@@ -22,7 +13,11 @@ public class CreateMerchantCommandHandler(IUnitOfWork unitOfWork, IMerchantRepos
             if (await _merchantRepository.EmailIsExistsAsync(request.Request.Email, cancellationToken))
                 return Result.Failure<MerchantResponse>(MerchantErrors.EmailDublicated);
             var merchant = await _merchantRepository.CreateMerchantAsync(request.Request, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            var TotalChanges = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (TotalChanges == 0)
+                return Result.Failure<MerchantResponse>(MerchantErrors.ZeroRowsAffected);
+            if (TotalChanges > 1)
+                return Result.Failure<MerchantResponse>(MerchantErrors.MultibleRowsAffected);
             await _unitOfWork.CommitTransactionAsync(cancellationToken);
             return Result.Success(merchant);
         }

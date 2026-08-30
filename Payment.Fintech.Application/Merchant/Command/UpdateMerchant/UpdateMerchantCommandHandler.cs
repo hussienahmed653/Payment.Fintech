@@ -1,4 +1,7 @@
-﻿namespace Payment.Fintech.Application.Merchant.Command.UpdateMerchant;
+﻿using Azure.Core;
+using Payment.Fintech.Domain.Entities;
+
+namespace Payment.Fintech.Application.Merchant.Command.UpdateMerchant;
 
 public class UpdateMerchantCommandHandler(IMerchantRepository merchantRepository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateMerchantCommand, Result<MerchantResponse>>
 {
@@ -13,22 +16,22 @@ public class UpdateMerchantCommandHandler(IMerchantRepository merchantRepository
             if (await _merchantRepository.GetMerchantByGuidAsync(request.Request.Guid, cancellationToken) is not { } merchant)
                 return Result.Failure<MerchantResponse>(MerchantErrors.MerchantNotFound);
 
-            if(!string.IsNullOrWhiteSpace(request.Request.Email) &&
-                !string.Equals(request.Request.Email, merchant.Email, StringComparison.OrdinalIgnoreCase))
+            if(EmailIsNotValid(request.Request.Email, merchant.Email))
             {
                 if (await _merchantRepository.EmailIsExistsAsync(request.Request.Email, cancellationToken))
                     return Result.Failure<MerchantResponse>(MerchantErrors.EmailDublicated);
             }
 
-            merchant.UpdateProfile(request.Request.ContactFirstName,
-                                    request.Request.ContactLastName,
-                                    request.Request.Email,
-                                    request.Request.Phone,
-                                    request.Request.BusinessName,
-                                    request.Request.BusinessType);
+            UpdatedProperty(merchant, request.Request);
 
             await _merchantRepository.UpdateMerchantAsync(merchant);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var TotalChanges = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (TotalChanges == 0)
+                return Result.Failure<MerchantResponse>(MerchantErrors.ZeroRowsAffected);
+            if (TotalChanges > 1)
+                return Result.Failure<MerchantResponse>(MerchantErrors.MultibleRowsAffected);
+
             await _unitOfWork.CommitTransactionAsync(cancellationToken);
             return Result.Success(merchant.Adapt<MerchantResponse>());
         }
@@ -37,5 +40,30 @@ public class UpdateMerchantCommandHandler(IMerchantRepository merchantRepository
             await _unitOfWork.RollbackTransactionAsync(cancellationToken);
             return Result.Failure<MerchantResponse>(new Error(ex.Message, ex.StackTrace, StatusCodes.Status400BadRequest));
         }
+    }
+
+    private bool EmailIsNotValid(string requestEmail, string EntityEmail)
+        => !string.IsNullOrWhiteSpace(requestEmail) &&
+                !string.Equals(requestEmail, EntityEmail, StringComparison.OrdinalIgnoreCase);
+
+    private void UpdatedProperty(Domain.Entities.Merchant merchant, UpdateMerchantRequest request)
+    {
+        if (!string.IsNullOrWhiteSpace(request.ContactFirstName))
+            merchant.ContactFirstName = request.ContactFirstName;
+
+        if (!string.IsNullOrWhiteSpace(request.ContactLastName))
+            merchant.ContactLastName = request.ContactLastName;
+
+        if (!string.IsNullOrWhiteSpace(request.Email))
+            merchant.Email = request.Email;
+
+        if (!string.IsNullOrWhiteSpace(request.Phone))
+            merchant.Phone = request.Phone;
+
+        if (!string.IsNullOrWhiteSpace(request.BusinessName))
+            merchant.BusinessName = request.BusinessName;
+
+        if (!string.IsNullOrWhiteSpace(request.BusinessType.ToString()))
+            merchant.BusinessType = (BusinessType)request.BusinessType!;
     }
 }

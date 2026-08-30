@@ -16,4 +16,8 @@ public record MerchantErrors
         new("MERCHANT_SEARCH_KEY_WORD_NOT_FOUND", "You Shoud Pass Search Key Word", StatusCodes.Status204NoContent);
     public static readonly Error Filter =
         new("NO_MERCHANT_MATCHES_FILTERS", "We Couldn't Find Any Merchant Matches Your Filters", StatusCodes.Status404NotFound);
+    public static readonly Error ZeroRowsAffected =
+        new("NO_ROWS_AFFECTED", "No Rows Affected. Expected (1) Row Affected", StatusCodes.Status400BadRequest);
+    public static readonly Error MultibleRowsAffected =
+        new("MULTIBLE_MERCHANT_ROWS_AFFECTED", "Multible Rows Affected. Expected (1) Row Affected", StatusCodes.Status400BadRequest);
 }

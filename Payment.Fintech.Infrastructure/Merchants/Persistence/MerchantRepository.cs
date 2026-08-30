@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Payment.Fintech.Domain.Entities;
 namespace Payment.Fintech.Infrastructure.Merchants.Persistence;
 
 internal class MerchantRepository(ApplicationDbContext context) : IMerchantRepository

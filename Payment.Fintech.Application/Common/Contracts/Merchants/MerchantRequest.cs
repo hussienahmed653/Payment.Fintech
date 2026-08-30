@@ -1,4 +1,7 @@
-﻿namespace Payment.Fintech.Application.Common.Contracts.Merchants;
+﻿using Payment.Fintech.Domain.Entities;
+
+
+namespace Payment.Fintech.Application.Common.Contracts.Merchants;
 
 public record MerchantRequest(
     string ContactFirstName,

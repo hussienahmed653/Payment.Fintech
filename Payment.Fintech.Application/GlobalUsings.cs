@@ -14,19 +14,6 @@ global using Payment.Fintech.Application.Common.Interfaces.UnitOfWork;
 global using Payment.Fintech.Domain;
 global using Payment.Fintech.Domain.Errors;
 global using System.Reflection;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+global using Payment.Fintech.Domain.Enums;
 
 

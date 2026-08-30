@@ -1,4 +1,7 @@
-﻿namespace Payment.Fintech.Application.Merchant.Command.UpdateMerchant;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Payment.Fintech.Domain.Entities;
+
+namespace Payment.Fintech.Application.Merchant.Command.UpdateMerchant;
 
 public class UpdateMerchantCommandValidator : AbstractValidator<UpdateMerchantCommand>
 {
@@ -6,7 +9,7 @@ public class UpdateMerchantCommandValidator : AbstractValidator<UpdateMerchantCo
     {
         RuleFor(m => m.Request.ContactFirstName)
            .Length(3, 100)
-           .WithMessage("'Contact First Name' must be between 3 and 100 characters long.");
+           .WithMessage("{PropertyName} must be between 3 and 100 characters long.");
 
         RuleFor(m => m.Request.ContactLastName)
            .Length(3, 100)

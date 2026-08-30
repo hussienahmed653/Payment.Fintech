@@ -1,4 +1,6 @@
 ﻿
+using Payment.Fintech.Domain.Entities;
+
 namespace Payment.Fintech.Infrastructure.Merchants.Persistence;
 
 internal class MerchantConfiguration : IEntityTypeConfiguration<Merchant>

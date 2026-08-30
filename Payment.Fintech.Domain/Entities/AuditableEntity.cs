@@ -1,4 +1,4 @@
-﻿namespace Payment.Fintech.Domain;
+﻿namespace Payment.Fintech.Domain.Entities;
 
 public class AuditableEntity
 {

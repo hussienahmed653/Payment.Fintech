@@ -1,4 +1,6 @@
-﻿namespace Payment.Fintech.Application.Common.Contracts.Merchants;
+﻿using Payment.Fintech.Domain.Enums;
+
+namespace Payment.Fintech.Application.Common.Contracts.Merchants;
 
 public record UpdateMerchantRequest(
     Guid Guid,

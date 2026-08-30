@@ -95,7 +95,7 @@ namespace Payment.Fintech.Infrastructure.Context.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Merchants");
+                    b.ToTable("Merchants", (string)null);
                 });
 #pragma warning restore 612, 618
         }

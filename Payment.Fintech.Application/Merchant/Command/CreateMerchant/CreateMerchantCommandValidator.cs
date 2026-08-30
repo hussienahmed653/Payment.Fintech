@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using Payment.Fintech.Domain.Entities;
+using System.Net.NetworkInformation;
 
 namespace Payment.Fintech.Application.Merchant.Command.CreateMerchant;
 

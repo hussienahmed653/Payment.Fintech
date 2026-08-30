@@ -1,4 +1,6 @@
-﻿namespace Payment.Fintech.Infrastructure.Context;
+﻿using Payment.Fintech.Domain.Entities;
+
+namespace Payment.Fintech.Infrastructure.Context;
 
 internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : DbContext(options)
 {
