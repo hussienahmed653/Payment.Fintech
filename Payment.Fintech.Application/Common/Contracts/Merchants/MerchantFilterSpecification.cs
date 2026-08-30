@@ -7,7 +7,7 @@ public class MerchantFilterSpecification(MerchantFilterRequest request)
     private readonly MerchantFilterRequest request = request;
     public Expression<Func<Domain.Merchant, bool>> ToExpression()
     {
-        return m =>    (string.IsNullOrWhiteSpace(request.ContactFirstName) || request.ContactFirstName == m.ContactFirstName)
+        return  m =>   (string.IsNullOrWhiteSpace(request.ContactFirstName) || request.ContactFirstName == m.ContactFirstName)
                     && (string.IsNullOrWhiteSpace(request.ContactLastName) || request.ContactLastName == m.ContactLastName)
                     && (string.IsNullOrWhiteSpace(request.Phone) || request.Phone == m.Phone)
                     && (string.IsNullOrWhiteSpace(request.BusinessName) || request.BusinessName == m.BusinessName)

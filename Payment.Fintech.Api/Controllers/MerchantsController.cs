@@ -1,16 +1,11 @@
-﻿using Payment.Fintech.Application.Merchant.Command.DeleteMerchant;
-using Payment.Fintech.Application.Merchant.Command.UpdateMerchant;
-using Payment.Fintech.Application.Merchant.Query.Filter;
-using Payment.Fintech.Application.Merchant.Query.Search;
-
-namespace Payment.Fintech.Api.Controllers;
+﻿namespace Payment.Fintech.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class MerchantsController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
-    [HttpGet("")]
+    [HttpGet("get-all-merchant")]
     public async Task<IActionResult> GetAll()
     {
         var query = new GetMerchantQuery();
@@ -20,63 +15,56 @@ public class MerchantsController(IMediator mediator) : ControllerBase
             : result.ToProblem();
     }
     [HttpGet("{Guid}")]
-    public async Task<IActionResult> Get([FromRoute] Guid Guid)
+    public async Task<IActionResult> Get([FromRoute] GetMerchantByGuidQuery query)
     {
-        var query = new GetMerchantByGuidQuery(Guid);
         var result = await _mediator.Send(query);
         return result.IsSuccess
             ? Ok(result.Value)
             : result.ToProblem();
     }
     [HttpGet("business-type")]
-    public async Task<IActionResult> GetByBusinessType([FromQuery] string businessType)
+    public async Task<IActionResult> GetByBusinessType([FromQuery] GetMerchantByBusinessTypeQuery query)
     {
-        var query = new GetMerchantByBusinessTypeQuery(businessType);
         var result = await _mediator.Send(query);
         return result.IsSuccess
             ? Ok(result.Value)
             : result.ToProblem();
     }
     [HttpPost("CreateMerchant")]
-    public async Task<IActionResult> Create([FromBody] MerchantRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateMerchantCommand command)
     {
-        var query = new CreateMerchantCommand(request);
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(command);
         return result.IsSuccess
             ? CreatedAtAction(nameof(Get), new {Guid = result.Value.GuidId}, result.Value)
             : result.ToProblem();
     }
-    [HttpPut("{Guid}")]
-    public async Task<IActionResult> Update([FromRoute] Guid Guid, [FromBody] UpdateMerchantRequest request)
+    [HttpPut("update-merchant")]
+    public async Task<IActionResult> Update([FromBody] UpdateMerchantCommand command)
     {
-        var query = new UpdateMerchantCommand(Guid, request);
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(command);
         return result.IsSuccess
             ? NoContent()
             : result.ToProblem();
     }
     [HttpDelete("{Guid}")]
-    public async Task<IActionResult> Remove([FromRoute] Guid Guid)
+    public async Task<IActionResult> Remove([FromRoute] DeleteMerchantCommand command)
     {
-        var query = new DeleteMerchantCommand(Guid);
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(command);
         return result.IsSuccess
             ? NoContent()
             : result.ToProblem();
     }
     [HttpGet("search")]
-    public async Task<IActionResult> Search([FromQuery] string search)
+    public async Task<IActionResult> Search([FromQuery] MerchantSearchQuery query)
     {
-        var query = new MerchantSearchQuery(search);
         var result = await _mediator.Send(query);
         return result.IsSuccess
             ? Ok(result.Value)
             : result.ToProblem();
     }
     [HttpGet("filter")]
-    public async Task<IActionResult> Filter([FromQuery] MerchantFilterRequest request)
+    public async Task<IActionResult> Filter([FromQuery] MerchantFilterQuery query)
     {
-        var query = new MerchantFilterQuery(request);
         var result = await _mediator.Send(query);
         return result.IsSuccess
             ? Ok(result.Value)

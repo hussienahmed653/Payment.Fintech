@@ -10,7 +10,7 @@ public class UpdateMerchantCommandHandler(IMerchantRepository merchantRepository
         try
         {
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
-            if (await _merchantRepository.GetMerchantByGuidAsync(request.Guid, cancellationToken) is not { } merchant)
+            if (await _merchantRepository.GetMerchantByGuidAsync(request.Request.Guid, cancellationToken) is not { } merchant)
                 return Result.Failure<MerchantResponse>(MerchantErrors.MerchantNotFound);
 
             if(!string.IsNullOrWhiteSpace(request.Request.Email) &&

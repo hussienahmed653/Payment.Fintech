@@ -9,7 +9,10 @@ global using Payment.Fintech.Application;
 global using Payment.Fintech.Infrastructure;
 global using Scalar.AspNetCore;
 global using Payment.Fintech.Application.Merchant.Query.GetMerchantByBusinessType;
-
+global using Payment.Fintech.Application.Merchant.Command.DeleteMerchant;
+global using Payment.Fintech.Application.Merchant.Command.UpdateMerchant;
+global using Payment.Fintech.Application.Merchant.Query.Filter;
+global using Payment.Fintech.Application.Merchant.Query.Search;
 
 
 
