@@ -1,7 +1,15 @@
 <Solution>
-  <Project Path="Payment.Fintech.Api/Payment.Fintech.Api.csproj" />
-  <Project Path="Payment.Fintech.Application/Payment.Fintech.Application.csproj" />
-  <Project Path="Payment.Fintech.Domain/Payment.Fintech.Domain.csproj" />
-  <Project Path="Payment.Fintech.Infrastructure/Payment.Fintech.Infrastructure.csproj" />
-  <Project Path="Shared/Shared.csproj" Id="f6110036-111b-4ed7-8b91-6dd76800787c" />
+  <Folder Name="/Services/" />
+  <Folder Name="/Services/CustomerService/">
+    <Project Path="Customer.Api/Customer.Api.csproj" Id="51a06847-1033-42e4-aa1a-77288b49c033" />
+    <Project Path="Customer.Application/Customer.Application.csproj" Id="cad9ce64-666e-4c57-a537-d776a0d3e14b" />
+    <Project Path="Customer.Domain/Customer.Domain.csproj" Id="cc86aeae-b9fb-4aad-bda4-9f2f1722c4a3" />
+    <Project Path="Customer.Infrastructure/Customer.Infrastructure.csproj" Id="3c32c16f-0cf1-4057-93d5-0ee848be9906" />
+  </Folder>
+  <Folder Name="/Services/MerchantService/">
+    <Project Path="Merchant.Api/Merchant.Api.csproj" Id="b6655475-96ca-44be-958d-8d55d757e2a2" />
+    <Project Path="Merchant.Application/Merchant.Application.csproj" Id="9b3b8d3b-94f8-425b-950c-2590a54ea67e" />
+    <Project Path="Merchant.Domain/Merchant.Domain.csproj" Id="112336e9-e3fc-4ac3-a11f-b64b2b637457" />
+    <Project Path="Merchant.Infrastructure/Merchant.Infrastructure.csproj" Id="bdfb9dc1-71a3-4ef2-8803-7c2b42e0604e" />
+  </Folder>
 </Solution>
