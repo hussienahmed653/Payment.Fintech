@@ -1,4 +1,4 @@
-﻿namespace Customer.Application.Abstraction;
+﻿namespace ResultPattern.Abstraction;
 
 public record Error(string Code, string Description, int? StatusCode)
 {

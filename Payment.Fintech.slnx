@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Generics/">
+    <Project Path="ResultPattern/ResultPattern.csproj" Id="9dd72274-58fb-494a-9a01-732cdb628acb" />
+  </Folder>
   <Folder Name="/Services/" />
   <Folder Name="/Services/CustomerService/">
     <Project Path="Customer.Api/Customer.Api.csproj" Id="51a06847-1033-42e4-aa1a-77288b49c033" />

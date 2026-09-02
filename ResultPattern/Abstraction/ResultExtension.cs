@@ -1,6 +1,7 @@
-﻿
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Merchant.Application.Abstraction;
+namespace ResultPattern.Abstraction;
 
 public static class ResultExtension
 {

@@ -1,4 +1,5 @@
-﻿public class Result
+﻿namespace ResultPattern.Abstraction;
+public class Result
 {
     public Result(bool isSuccess, Error error)
     {
