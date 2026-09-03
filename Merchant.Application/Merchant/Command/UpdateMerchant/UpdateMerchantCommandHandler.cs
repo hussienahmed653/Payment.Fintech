@@ -15,7 +15,7 @@ public class UpdateMerchantCommandHandler(IMerchantRepository merchantRepository
             if (await _merchantRepository.GetMerchantByGuidAsync(request.Request.Guid, cancellationToken) is not { } merchant)
                 return Result.Failure<MerchantResponse>(MerchantErrors.MerchantNotFound);
 
-            if (EmailIsNotValid(request.Request.Email, merchant.Email))
+            if (IsEmailChanged(request.Request.Email, merchant.Email))
             {
                 if (await _merchantRepository.EmailIsExistsAsync(request.Request.Email, cancellationToken))
                     return Result.Failure<MerchantResponse>(MerchantErrors.EmailDublicated);
@@ -41,7 +41,7 @@ public class UpdateMerchantCommandHandler(IMerchantRepository merchantRepository
         }
     }
 
-    private bool EmailIsNotValid(string requestEmail, string EntityEmail)
+    private bool IsEmailChanged(string requestEmail, string EntityEmail)
         => !string.IsNullOrWhiteSpace(requestEmail) &&
                 !string.Equals(requestEmail, EntityEmail, StringComparison.OrdinalIgnoreCase);
 

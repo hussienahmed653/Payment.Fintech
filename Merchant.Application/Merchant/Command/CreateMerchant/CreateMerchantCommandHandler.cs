@@ -7,24 +7,18 @@ public class CreateMerchantCommandHandler(IUnitOfWork unitOfWork, IMerchantRepos
 
     public async Task<Result<MerchantResponse>> Handle(CreateMerchantCommand request, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _unitOfWork.BeginTransactionAsync(cancellationToken);
-            if (await _merchantRepository.EmailIsExistsAsync(request.Request.Email, cancellationToken))
-                return Result.Failure<MerchantResponse>(MerchantErrors.EmailDublicated);
-            var merchant = await _merchantRepository.CreateMerchantAsync(request.Request, cancellationToken);
-            var TotalChanges = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            if (TotalChanges == 0)
-                return Result.Failure<MerchantResponse>(MerchantErrors.ZeroRowsAffected);
-            if (TotalChanges > 1)
-                return Result.Failure<MerchantResponse>(MerchantErrors.MultibleRowsAffected);
-            await _unitOfWork.CommitTransactionAsync(cancellationToken);
-            return Result.Success(merchant);
-        }
-        catch (Exception ex)
-        {
-            await _unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Failure<MerchantResponse>(new Error("CreateMerchantFailed", ex.Message, StatusCodes.Status500InternalServerError));
-        }
+        if (await _merchantRepository.EmailIsExistsAsync(request.Request.Email, cancellationToken))
+            return Result.Failure<MerchantResponse>(MerchantErrors.EmailDublicated);
+
+        var merchant = await _merchantRepository.CreateMerchantAsync(request.Request, cancellationToken);
+
+        var TotalChanges = await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        if (TotalChanges == 0)
+            return Result.Failure<MerchantResponse>(MerchantErrors.ZeroRowsAffected);
+        if (TotalChanges > 1)
+            return Result.Failure<MerchantResponse>(MerchantErrors.MultibleRowsAffected);
+
+        return Result.Success(merchant);
     }
 }
