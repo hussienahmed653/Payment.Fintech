@@ -18,6 +18,6 @@ public sealed class Customer : AuditableEntity
     public CustomerStatus Status { get; set; } = CustomerStatus.Pending;
     public decimal DailyLimit { get; set; }
     public int MerchantId { get; set; }
-    public int MerchantGuid { get; set; }
+    public Guid MerchantGuid { get; set; }
 }
 

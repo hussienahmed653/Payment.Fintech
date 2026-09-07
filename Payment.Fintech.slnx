@@ -15,4 +15,10 @@
     <Project Path="Merchant.Domain/Merchant.Domain.csproj" Id="112336e9-e3fc-4ac3-a11f-b64b2b637457" />
     <Project Path="Merchant.Infrastructure/Merchant.Infrastructure.csproj" Id="bdfb9dc1-71a3-4ef2-8803-7c2b42e0604e" />
   </Folder>
+  <Folder Name="/Services/PaymentRequestService/">
+    <Project Path="PaymentRequest.Api/PaymentRequest.Api.csproj" Id="8915f006-f460-4931-b105-09d9a0a4178d" />
+    <Project Path="PaymentRequest.Application/PaymentRequest.Application.csproj" Id="7959e1b0-9e9e-4404-9c14-621ff53f4e54" />
+    <Project Path="PaymentRequest.Domain/PaymentRequest.Domain.csproj" Id="bb66ec2f-31a9-4889-af47-b7527b0e4c83" />
+    <Project Path="PaymentRequest.Infrastructure/PaymentRequest.Infrastructure.csproj" Id="7b5079b9-0bd6-4229-b5c8-af4448813182" />
+  </Folder>
 </Solution>

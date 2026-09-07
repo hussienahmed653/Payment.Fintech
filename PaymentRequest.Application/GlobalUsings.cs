@@ -1,0 +1,15 @@
+﻿global using FluentValidation;
+global using FluentValidation.AspNetCore;
+global using Mapster;
+global using MapsterMapper;
+global using MediatR;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Payment.Fintech.Domain.Errors;
+global using PaymentRequest.Application.Common.Contracts.Merchants;
+global using PaymentRequest.Application.Common.Interfaces.Merchants;
+global using PaymentRequest.Application.Common.Interfaces.UnitOfWork;
+global using ResultPattern.Abstraction;
+global using System.Reflection;
+global using PaymentRequest.Application.Common.Behaviors;
