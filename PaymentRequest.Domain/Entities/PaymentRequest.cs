@@ -10,8 +10,8 @@ public sealed class PaymentRequest : AuditableEntity
     public string Reference { get; set; }
     public int MerchantId { get; set; }
     public Guid MerchantGuid { get; set; }
-    public int? CustomerId { get; set; }
-    public Guid? CustomerGuid { get; set; }
+    public int? CustomerId { get; set; } = null;
+    public Guid? CustomerGuid { get; set; } = null;
     public decimal Amount { get; set; }
     public PaymentCurrency Currency { get; set; }
     public PaymentStatus Status { get; set; }
