@@ -3,7 +3,7 @@
 public interface IPaymentRepository
 {
     //Task<IEnumerable<MerchantResponse>> GetMerchantAsync(CancellationToken cancellationToken = default);
-    //Task<IEnumerable<MerchantResponse>> GetMerchantByBusinessTypeAsync(string businessType, CancellationToken cancellationToken = default);
+    Task<Domain.Entities.PaymentRequest> GetPaymentByReferenceAsync(string reference, CancellationToken cancellationToken = default);
     //Task<Domain.Entities.PaymentRequest> GetMerchantByGuidAsync(Guid id, CancellationToken cancellationToken = default);
     //Task<IEnumerable<Domain.Entities.PaymentRequest>> SearchAsync(string search, CancellationToken cancellationToken = default);
     //Task<IEnumerable<Domain.Entities.PaymentRequest>> FilterAsync(MerchantFilterSpecification spec, CancellationToken cancellationToken = default);

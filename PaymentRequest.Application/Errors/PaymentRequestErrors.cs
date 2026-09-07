@@ -4,8 +4,8 @@ public record PaymentRequestErrors
 {
     public static readonly Error EmailDublicated =
         new("MERCHANT_EMAIL_DUBLICATED", "Merchant email is already in use.", StatusCodes.Status409Conflict);
-    public static readonly Error MerchantNotFound =
-        new("MERCHANT_NOTFOUND", "Merchant not found.", StatusCodes.Status404NotFound);
+    public static readonly Error PaymentRequestNotFound =
+        new("PAYMENT_REQUEST_NOT_FOUND", "Payment request not found.", StatusCodes.Status404NotFound);
     public static readonly Error InvalidGuid =
         new("MERCHANT_INVALID_GUID", "Invalid merchant GUID.", StatusCodes.Status400BadRequest);
     public static readonly Error BusinessTypeNotFound =

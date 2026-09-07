@@ -23,6 +23,6 @@ internal class PaymentRequestConfiguration : IEntityTypeConfiguration<Domain.Ent
         builder.Property(x => x.Status)
             .HasConversion<string>()
             .IsRequired()
-            .HasDefaultValue(PaymentStatus.Processing);
+            .HasDefaultValue(PaymentStatus.Created);
     }
 }

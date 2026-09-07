@@ -1,4 +1,5 @@
 ﻿using PaymentRequest.Application.Merchant.Command.CreateMerchant;
+using PaymentRequest.Application.Payments.Query.GetPaymentRequestByReference;
 
 namespace PaymentRequest.Api.Controllers;
 
@@ -7,16 +8,15 @@ namespace PaymentRequest.Api.Controllers;
 public class PaymentsController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
-    //[HttpGet("get-all-merchant")]
-    //public async Task<IActionResult> GetAll()
-    //{
-    //    var query = new GetMerchantQuery();
-    //    var result = await _mediator.Send(query);
-    //    return result.IsSuccess
-    //        ? Ok(result.Value)
-    //        : result.ToProblem();
-    //}
-    [HttpGet("{Guid}")]
+    [HttpGet("{reference}")]
+    public async Task<IActionResult> GetByReference([FromRoute] GetPaymentRequestByReferenceQuery request)
+    { 
+        var result = await _mediator.Send(request);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
+    }
+    [HttpGet("")]
     public async Task<IActionResult> Get()
     {
         return Ok();
