@@ -13,3 +13,5 @@ global using PaymentRequest.Application.Common.Interfaces.UnitOfWork;
 global using ResultPattern.Abstraction;
 global using System.Reflection;
 global using PaymentRequest.Application.Common.Behaviors;
+global using PaymentRequest.Application.Common.Contracts.PaymentRequests;
+global using PaymentRequest.Domain.Enums;

@@ -1,7 +1,4 @@
-﻿using PaymentRequest.Application.Merchant.Command.CreateMerchant;
-using PaymentRequest.Application.Payments.Query.GetPaymentRequestByReference;
-
-namespace PaymentRequest.Api.Controllers;
+﻿namespace PaymentRequest.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -9,9 +6,9 @@ public class PaymentsController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
     [HttpGet("{reference}")]
-    public async Task<IActionResult> GetByReference([FromRoute] GetPaymentRequestByReferenceQuery request)
+    public async Task<IActionResult> GetByReference([FromRoute] GetPaymentRequestByReferenceQuery query)
     { 
-        var result = await _mediator.Send(request);
+        var result = await _mediator.Send(query);
         return result.IsSuccess
             ? Ok(result.Value)
             : result.ToProblem();
@@ -21,15 +18,7 @@ public class PaymentsController(IMediator mediator) : ControllerBase
     {
         return Ok();
     }
-    //[HttpGet("business-type")]
-    //public async Task<IActionResult> GetByBusinessType([FromQuery] GetMerchantByBusinessTypeQuery query)
-    //{
-    //    var result = await _mediator.Send(query);
-    //    return result.IsSuccess
-    //        ? Ok(result.Value)
-    //        : result.ToProblem();
-    //}
-    [HttpPost("create-merchant")]
+    [HttpPost("payments")]
     public async Task<IActionResult> Create([FromBody] CreatePaymentCommand command)
     {
         var result = await _mediator.Send(command);
@@ -37,36 +26,12 @@ public class PaymentsController(IMediator mediator) : ControllerBase
             ? CreatedAtAction(nameof(Get), new { Guid = result.Value.GuidId }, result.Value)
             : result.ToProblem();
     }
-    //[HttpPut("update-merchant")]
-    //public async Task<IActionResult> Update([FromBody] UpdateMerchantCommand command)
-    //{
-    //    var result = await _mediator.Send(command);
-    //    return result.IsSuccess
-    //        ? NoContent()
-    //        : result.ToProblem();
-    //}
-    //[HttpDelete("{Guid}")]
-    //public async Task<IActionResult> Remove([FromRoute] DeleteMerchantCommand command)
-    //{
-    //    var result = await _mediator.Send(command);
-    //    return result.IsSuccess
-    //        ? NoContent()
-    //        : result.ToProblem();
-    //}
-    //[HttpGet("search")]
-    //public async Task<IActionResult> Search([FromQuery] MerchantSearchQuery query)
-    //{
-    //    var result = await _mediator.Send(query);
-    //    return result.IsSuccess
-    //        ? Ok(result.Value)
-    //        : result.ToProblem();
-    //}
-    //[HttpGet("filter")]
-    //public async Task<IActionResult> Filter([FromQuery] MerchantFilterQuery query)
-    //{
-    //    var result = await _mediator.Send(query);
-    //    return result.IsSuccess
-    //        ? Ok(result.Value)
-    //        : result.ToProblem();
-    //}
+    [HttpPost("{reference}/pay")]
+    public async Task<IActionResult> Pay([FromRoute] PayPaymentCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : result.ToProblem();
+    }
 }

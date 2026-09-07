@@ -1,7 +1,4 @@
-﻿using PaymentRequest.Application.Common.Interfaces.Merchants;
-using PaymentRequest.Application.Common.Interfaces.UnitOfWork;
-
-namespace PaymentRequest.Infrastructure;
+﻿namespace PaymentRequest.Infrastructure;
 
 public static class DependancyInjection
 {
@@ -9,6 +6,7 @@ public static class DependancyInjection
     {
         services.AddScoped<IPaymentRepository, PaymentRequestRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWorkRepository>();
+        services.AddScoped<IPaymentGatewayRepository, PaymentGatewayRepository>();
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<ApplicationDbContext>(options =>

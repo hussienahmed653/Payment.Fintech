@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using PaymentRequest.Application.Merchant.Command.CreateMerchant;
 
-namespace PaymentRequest.Application.Merchant.Command.CreateMerchant;
+namespace PaymentRequest.Application.Payments.Command.CreatePayment;
 
-public class CreatePaymentCommandValidator : AbstractValidator<CreatePaymentCommand>
+public class PayPaymentCommandValidator : AbstractValidator<CreatePaymentCommand>
 {
-    public CreatePaymentCommandValidator()
+    public PayPaymentCommandValidator()
     {
         RuleFor(m => m.Request.MerchantId)
            .NotEmpty();

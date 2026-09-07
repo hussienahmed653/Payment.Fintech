@@ -13,7 +13,10 @@ global using System.Reflection;
 global using System.Security.Claims;
 global using PaymentRequest.Domain.Entities;
 global using PaymentRequest.Domain.Enums;
-
+global using PaymentRequest.Application.Common.Interfaces.Merchants;
+global using PaymentRequest.Application.Common.Interfaces.Payments;
+global using PaymentRequest.Application.Common.Interfaces.UnitOfWork;
+global using PaymentRequest.Infrastructure.Payments.Persistence;
 
 
 
