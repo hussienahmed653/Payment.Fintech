@@ -14,6 +14,9 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
         if(await _paymentRepository.GetPaymentByReferenceAsync(request.reference, cancellationToken) is not { } payment)
             return Result.Failure<PayPaymentResponse>(PaymentRequestErrors.PaymentRequestNotFound);
 
+        if(!IsValidStatus(payment.Status))
+            return Result.Failure<PayPaymentResponse>(PaymentRequestErrors.InvalidStatusForProcessing);
+
         payment.Status = PaymentStatus.Processing;
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         var gatewayResult = await _paymentGatewayRepository.ProcessPaymentAsync(payment.Reference, payment.Amount, payment.Currency.ToString());
@@ -27,4 +30,6 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Failure<PayPaymentResponse>(PaymentRequestErrors.PaymentProcessingFailed);
     }
+    private bool IsValidStatus(PaymentStatus status) => 
+        status == PaymentStatus.Created;
 }
