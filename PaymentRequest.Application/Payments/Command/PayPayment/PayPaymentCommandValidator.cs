@@ -11,5 +11,11 @@ public class PayPaymentCommandValidator : AbstractValidator<PayPaymentCommand>
             .WithMessage("Reference is required.")
             .MaximumLength(100)
             .WithMessage("Reference cannot exceed 100 characters.");
+
+        RuleFor(x => x.idempotencyId)
+            .NotEmpty()
+            .MaximumLength(128)
+            .WithMessage("Idempotency ID is required and cannot exceed 128 characters.");
+
     }
 }

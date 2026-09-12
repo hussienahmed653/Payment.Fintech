@@ -1,7 +1,4 @@
-﻿using PaymentRequest.Application.Common.Contracts.Merchants;
-using PaymentRequest.Application.Common.Interfaces.Merchants;
-
-namespace PaymentRequest.Infrastructure.Merchants.Persistence;
+﻿namespace PaymentRequest.Infrastructure.PaymentRequests.Persistence;
 
 internal class PaymentRequestRepository(ApplicationDbContext context) : IPaymentRepository
 {

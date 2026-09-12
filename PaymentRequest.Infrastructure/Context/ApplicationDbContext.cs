@@ -3,6 +3,7 @@
 internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : DbContext(options)
 {
     public DbSet<Domain.Entities.PaymentRequest> PaymentRequests { get; set; }
+    public DbSet<Domain.Entities.PaymentTransaction> PaymentTransactions { get; set; }
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     override protected void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,7 +1,6 @@
 ﻿using PaymentRequest.Application.Common.Contracts.PaymentRequests;
-using PaymentRequest.Application.Common.Interfaces.Payments;
 
-namespace PaymentRequest.Infrastructure.Payments.Persistence;
+namespace PaymentRequest.Infrastructure.PaymentRequests.Persistence;
 
 public class PaymentGatewayRepository : IPaymentGatewayRepository
 {

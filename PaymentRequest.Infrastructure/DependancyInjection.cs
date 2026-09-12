@@ -7,6 +7,7 @@ public static class DependancyInjection
         services.AddScoped<IPaymentRepository, PaymentRequestRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWorkRepository>();
         services.AddScoped<IPaymentGatewayRepository, PaymentGatewayRepository>();
+        services.AddScoped<IPaymentTransactionRepository, PaymentTransactionRepository>();
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<ApplicationDbContext>(options =>

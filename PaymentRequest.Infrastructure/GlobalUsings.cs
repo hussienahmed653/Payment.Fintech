@@ -7,7 +7,7 @@ global using Microsoft.EntityFrameworkCore.Storage;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using PaymentRequest.Infrastructure.Context;
-global using PaymentRequest.Infrastructure.Merchants.Persistence;
+global using PaymentRequest.Infrastructure.PaymentRequests.Persistence;
 global using PaymentRequest.Infrastructure.UnitOfWork;
 global using System.Reflection;
 global using System.Security.Claims;
@@ -16,7 +16,7 @@ global using PaymentRequest.Domain.Enums;
 global using PaymentRequest.Application.Common.Interfaces.Merchants;
 global using PaymentRequest.Application.Common.Interfaces.Payments;
 global using PaymentRequest.Application.Common.Interfaces.UnitOfWork;
-global using PaymentRequest.Infrastructure.Payments.Persistence;
+global using PaymentRequest.Infrastructure.PaymentTransactions.Persistence;
 
 
 

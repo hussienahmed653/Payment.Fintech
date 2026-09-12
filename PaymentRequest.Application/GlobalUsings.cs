@@ -15,3 +15,7 @@ global using System.Reflection;
 global using PaymentRequest.Application.Common.Behaviors;
 global using PaymentRequest.Application.Common.Contracts.PaymentRequests;
 global using PaymentRequest.Domain.Enums;
+global using PaymentRequest.Application.Common.Interfaces.Payments;
+global using PaymentRequest.Application.Errors;
+global using PaymentRequest.Domain.Entities;
+global using System.Text.Json;

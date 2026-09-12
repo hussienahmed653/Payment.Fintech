@@ -15,7 +15,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
             .Where(validationFailure => validationFailure is not null)
             .Select(failure => new Error
             (
-                Code: failure.PropertyName.Split('.')[1],
+                Code: failure.ErrorCode ?? failure.PropertyName,
                 Description: failure.ErrorMessage,
                 StatusCode: StatusCodes.Status400BadRequest
             ))

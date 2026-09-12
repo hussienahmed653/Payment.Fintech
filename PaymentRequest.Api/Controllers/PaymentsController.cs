@@ -27,8 +27,9 @@ public class PaymentsController(IMediator mediator) : ControllerBase
             : result.ToProblem();
     }
     [HttpPost("{reference}/pay")]
-    public async Task<IActionResult> Pay([FromRoute] PayPaymentCommand command)
+    public async Task<IActionResult> Pay([FromRoute] string reference, [FromHeader(Name ="X-Idempotency-Key")] string idemPotencyId)
     {
+        var command = new PayPaymentCommand(reference, idemPotencyId);
         var result = await _mediator.Send(command);
         return result.IsSuccess
             ? Ok(result.Value)

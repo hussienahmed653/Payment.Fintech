@@ -1,8 +1,4 @@
-﻿
-
-using System.Security.Cryptography;
-
-namespace PaymentRequest.Infrastructure.Merchants.Persistence;
+﻿namespace PaymentRequest.Infrastructure.PaymentRequests.Persistence;
 
 internal class PaymentRequestConfiguration : IEntityTypeConfiguration<Domain.Entities.PaymentRequest>
 {
