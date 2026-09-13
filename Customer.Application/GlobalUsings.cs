@@ -1,5 +1,4 @@
-﻿//global using Customer.Application.Abstraction;
-global using Customer.Application.Common.Contracts.Customers;
+﻿global using Customer.Application.Common.Contracts.Customers;
 global using Customer.Application.Common.Interfaces.Customers;
 global using Customer.Application.Common.Interfaces.UnitOfWork;
 global using Customer.Application.Errors;
@@ -14,4 +13,4 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using ResultPattern.Abstraction;
 global using System.Reflection;
-
+global using ValidationPipeline.Behaviors;

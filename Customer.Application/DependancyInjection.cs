@@ -1,6 +1,4 @@
-﻿using Customer.Application.Common.Behaviors;
-
-namespace Customer.Application;
+﻿namespace Customer.Application;
 
 public static class DependancyInjection
 {

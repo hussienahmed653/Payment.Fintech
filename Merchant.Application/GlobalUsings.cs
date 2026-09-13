@@ -13,4 +13,4 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using ResultPattern.Abstraction;
 global using System.Reflection;
-
+global using ValidationPipeline.Behaviors;

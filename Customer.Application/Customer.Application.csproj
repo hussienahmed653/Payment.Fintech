@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Customer.Domain\Customer.Domain.csproj" />
     <ProjectReference Include="..\ResultPattern\ResultPattern.csproj" />
+    <ProjectReference Include="..\ValidationPipeline\ValidationPipeline.csproj" />
   </ItemGroup>
 
 </Project>

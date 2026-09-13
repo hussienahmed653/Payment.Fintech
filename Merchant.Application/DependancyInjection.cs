@@ -1,6 +1,4 @@
-﻿using Merchant.Application.Common.Behaviors;
-
-namespace Merchant.Application;
+﻿namespace Merchant.Application;
 
 public static class DependancyInjection
 {

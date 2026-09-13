@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Generics/">
     <Project Path="ResultPattern/ResultPattern.csproj" Id="9dd72274-58fb-494a-9a01-732cdb628acb" />
+    <Project Path="ValidationPipeline/ValidationPipeline.csproj" Id="0718bdc4-3650-478b-8ac4-fa5c8bb71a3e" />
   </Folder>
   <Folder Name="/Services/" />
   <Folder Name="/Services/CustomerService/">

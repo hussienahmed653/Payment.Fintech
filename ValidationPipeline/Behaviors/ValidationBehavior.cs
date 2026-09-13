@@ -1,4 +1,9 @@
-﻿namespace Merchant.Application.Common.Behaviors;
+﻿using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using ResultPattern.Abstraction;
+
+namespace ValidationPipeline.Behaviors;
 
 public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
@@ -15,7 +20,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
             .Where(validationFailure => validationFailure is not null)
             .Select(failure => new Error
             (
-                Code: failure.PropertyName.Split('.')[1],
+                Code: failure.ErrorCode ?? failure.PropertyName,
                 Description: failure.ErrorMessage,
                 StatusCode: StatusCodes.Status400BadRequest
             ))

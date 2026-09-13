@@ -1,5 +1,4 @@
 ﻿global using Customer.Application;
-//global using Customer.Application.Abstraction;
 global using Customer.Application.Customer.Command.CreateCustomer;
 global using Customer.Application.Customer.Command.DeleteCustomer;
 global using Customer.Application.Customer.Command.UpdateCustomer;
@@ -11,9 +10,8 @@ global using Customer.Application.Customer.Query.GetCustomerByGuid;
 global using Customer.Infrastructure;
 global using MediatR;
 global using Microsoft.AspNetCore.Mvc;
-global using Scalar.AspNetCore;
 global using ResultPattern.Abstraction;
-
+global using Scalar.AspNetCore;
 
 
 
