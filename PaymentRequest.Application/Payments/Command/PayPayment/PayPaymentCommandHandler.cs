@@ -35,14 +35,7 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
             return Result.Failure<PayPaymentResponse>(PaymentRequestErrors.InvalidStatusForProcessing);
 
         payment.Status = PaymentStatus.Processing;
-        var paymentTransaction = new PaymentTransaction
-        {
-            PaymentRequestId = payment.Id,
-            PaymentRequestGuid = payment.GuidId,
-            IdemPotency = request.idempotencyId,
-            Status = PaymentStatus.Processing,
-            Amount = payment.Amount,
-        };
+        var paymentTransaction = (payment, request.idempotencyId).Adapt<PaymentTransaction>();
 
         await _paymentTransactionRepository.AddAsync(paymentTransaction, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
