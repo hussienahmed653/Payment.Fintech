@@ -17,6 +17,8 @@ global using PaymentRequest.Application.Common.Interfaces.Merchants;
 global using PaymentRequest.Application.Common.Interfaces.Payments;
 global using PaymentRequest.Application.Common.Interfaces.UnitOfWork;
 global using PaymentRequest.Infrastructure.PaymentTransactions.Persistence;
+global using PaymentRequest.Application.Common.Interfaces.Redis;
+global using PaymentRequest.Infrastructure.Redis.Persistence;
 
 
 

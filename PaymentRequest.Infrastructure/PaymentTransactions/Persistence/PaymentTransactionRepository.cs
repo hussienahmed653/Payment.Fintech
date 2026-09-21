@@ -7,8 +7,8 @@ internal class PaymentTransactionRepository(ApplicationDbContext context) : IPay
     public async Task AddAsync(PaymentTransaction paymentTransaction, CancellationToken cancellationToken = default!) =>
         await _context.AddAsync(paymentTransaction, cancellationToken);
 
-    public async Task<PaymentTransaction> GetByIdemPotencyIdAsync(string idemPotencyId, CancellationToken cancellationToken = default) =>
+    public async Task<PaymentTransaction> GetByPaymentRequestGuidAsync(Guid paymentRequestGuid, CancellationToken cancellationToken = default) =>
         await _context.PaymentTransactions
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.IdemPotency.Equals(idemPotencyId), cancellationToken) ?? default!;
+            .FirstOrDefaultAsync(p => p.PaymentRequestGuid == paymentRequestGuid, cancellationToken) ?? default!;
 }

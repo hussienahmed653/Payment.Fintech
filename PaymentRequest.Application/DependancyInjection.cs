@@ -1,4 +1,6 @@
-﻿namespace PaymentRequest.Application;
+﻿using StackExchange.Redis;
+
+namespace PaymentRequest.Application;
 
 public static class DependancyInjection
 {
@@ -6,7 +8,8 @@ public static class DependancyInjection
     {
         services.AddMediatRService()
             .AddFluentValidationService()
-            .AddMapsterService();
+            .AddMapsterService()
+            .AddRedisService(configuration);
         return services;
     }
     private static IServiceCollection AddMediatRService(this IServiceCollection services)
@@ -33,6 +36,20 @@ public static class DependancyInjection
         mapconfig.Scan(Assembly.GetExecutingAssembly());
 
         services.AddSingleton<IMapper>(new Mapper(mapconfig));
+        return services;
+    }
+    private static IServiceCollection AddRedisService(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("Redis");
+            options.InstanceName = "PaymentRequest_";
+        });
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+        {
+            var configurationOptions = configuration.GetConnectionString("Redis");
+            return ConnectionMultiplexer.Connect(configurationOptions!);
+        });
         return services;
     }
 }

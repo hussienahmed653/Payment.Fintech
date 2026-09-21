@@ -8,6 +8,7 @@ public static class DependancyInjection
         services.AddScoped<IUnitOfWork, UnitOfWorkRepository>();
         services.AddScoped<IPaymentGatewayRepository, PaymentGatewayRepository>();
         services.AddScoped<IPaymentTransactionRepository, PaymentTransactionRepository>();
+        services.AddScoped<ICacheService, CacheService>();
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<ApplicationDbContext>(options =>

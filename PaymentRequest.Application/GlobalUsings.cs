@@ -19,3 +19,4 @@ global using ResultPattern.Abstraction;
 global using System.Reflection;
 global using System.Text.Json;
 global using ValidationPipeline.Behaviors;
+global using PaymentRequest.Application.Common.Interfaces.Redis;
