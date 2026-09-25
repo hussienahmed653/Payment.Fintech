@@ -20,7 +20,8 @@ internal class CacheService(StackExchange.Redis.IDatabase database,
 
     public async Task<T> GetAsync<T>(string key, CancellationToken cancellationToken = default)
     {
-        if(_database.StringGetAsync(key) is not { } cachedValue)
+        var cachedValue = _database.StringGetAsync(key);
+        if (cachedValue.Result.HasValue is false)
         {
             return default!;
         }

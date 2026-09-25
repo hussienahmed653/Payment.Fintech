@@ -1,4 +1,5 @@
 ﻿using StackExchange.Redis;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace PaymentRequest.Application;
 
@@ -40,16 +41,23 @@ public static class DependancyInjection
     }
     private static IServiceCollection AddRedisService(this IServiceCollection services, IConfiguration configuration)
     {
+        var connectionString = configuration.GetConnectionString("Redis");
         services.AddStackExchangeRedisCache(options =>
         {
-            options.Configuration = configuration.GetConnectionString("Redis");
+            options.Configuration = connectionString;
             options.InstanceName = "PaymentRequest_";
         });
         services.AddSingleton<IConnectionMultiplexer>(sp =>
         {
-            var configurationOptions = configuration.GetConnectionString("Redis");
-            return ConnectionMultiplexer.Connect(configurationOptions!);
+            return ConnectionMultiplexer.Connect(connectionString!);
         });
+
+        services.AddScoped(sp =>
+        {
+            var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+            return multiplexer.GetDatabase();
+        });
+
         return services;
     }
 }

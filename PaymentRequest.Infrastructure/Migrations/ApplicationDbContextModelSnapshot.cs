@@ -82,7 +82,7 @@ namespace PaymentRequest.Infrastructure.Migrations
                     b.HasIndex("Reference")
                         .IsUnique();
 
-                    b.ToTable("PaymentRequests");
+                    b.ToTable("PaymentRequests", (string)null);
                 });
 
             modelBuilder.Entity("PaymentRequest.Domain.Entities.PaymentTransaction", b =>
@@ -143,7 +143,7 @@ namespace PaymentRequest.Infrastructure.Migrations
                     b.HasIndex("IdemPotency")
                         .IsUnique();
 
-                    b.ToTable("PaymentTransactions");
+                    b.ToTable("PaymentTransactions", (string)null);
                 });
 #pragma warning restore 612, 618
         }
