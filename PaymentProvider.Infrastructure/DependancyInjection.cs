@@ -1,4 +1,6 @@
-﻿namespace PaymentProvider.Infrastructure;
+﻿using PaymentProvider.Integration.MMO;
+
+namespace PaymentProvider.Infrastructure;
 
 public static class DependancyInjection
 {
@@ -7,6 +9,7 @@ public static class DependancyInjection
         services.AddHttpClient<PawaPayProcessor>();
         services.AddScoped<ISelectorFactory, SelectorFactory>();
         services.AddKeyedScoped<IPaymentProcessor, PawaPayProcessor>((int)PaymentProviderType.PawaPay);
+        services.AddKeyedScoped<IPaymentProcessor, MMOProcessor>((int)PaymentProviderType.MMO);
 
         return services;
     }

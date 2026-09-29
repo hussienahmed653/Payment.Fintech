@@ -7,6 +7,15 @@ public static class DependancyInjection
         services.AddMediatRService()
             .AddFluentValidationService()
             .AddMapsterService();
+        services.AddHttpClient("PaymentGateway", client =>
+        {
+            client.BaseAddress = new Uri("https://localhost:7063/");
+        })
+        .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            // السماح بشهادات SSL الخاصة بـ localhost أثناء التطوير Local Development
+            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+        }); 
         return services;
     }
     private static IServiceCollection AddMediatRService(this IServiceCollection services)

@@ -8,7 +8,8 @@ public record CustomerRequest(
     string BusinessName,
     BusinessType BusinessType,
     string TaxId,
-    string Currency,
+    Currency Currency,
     CustomerStatus Status,
     decimal DailyLimit
 );
+

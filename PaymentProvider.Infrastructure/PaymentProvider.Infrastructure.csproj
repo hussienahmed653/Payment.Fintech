@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PaymentProvider.Application\PaymentProvider.Application.csproj" />
+    <ProjectReference Include="..\PaymentProvider.Integration.MMO\PaymentProvider.Integration.MMO.csproj" />
     <ProjectReference Include="..\PaymentProvider.Integration.PawaPay\PaymentProvider.Integration.PawaPay.csproj" />
   </ItemGroup>
 

@@ -16,7 +16,7 @@ public class PayPaymentCommandValidator : AbstractValidator<CreatePaymentCommand
         RuleFor(m => m.Request.Amount)
             .NotEmpty();
 
-        RuleFor(m => m.Request.Currency)
-            .IsInEnum();
+        //RuleFor(m => m.Request.Currency)
+        //    .IsInEnum();
     }
 }

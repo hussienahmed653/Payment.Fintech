@@ -3,15 +3,6 @@
     <Project Path="ResultPattern/ResultPattern.csproj" Id="9dd72274-58fb-494a-9a01-732cdb628acb" />
     <Project Path="ValidationPipeline/ValidationPipeline.csproj" Id="0718bdc4-3650-478b-8ac4-fa5c8bb71a3e" />
   </Folder>
-  <Folder Name="/PaymentProvider/">
-    <Project Path="PaymentProvider.Api/PaymentProvider.Api.csproj" Id="50cad75a-f7d8-47dc-8556-05a318ebe295" />
-    <Project Path="PaymentProvider.Application/PaymentProvider.Application.csproj" Id="496ab2f4-a047-4f8c-98d5-c1edf49269f0" />
-    <Project Path="PaymentProvider.Domain/PaymentProvider.Domain.csproj" Id="c480af74-fc3e-434e-8007-147922bdad89" />
-    <Project Path="PaymentProvider.Infrastructure/PaymentProvider.Infrastructure.csproj" Id="5a463172-4b37-4314-89a0-d3fc9ab14e1c" />
-  </Folder>
-  <Folder Name="/PaymentProvider/Integration/">
-    <Project Path="PaymentProvider.Integration.PawaPay/PaymentProvider.Integration.PawaPay.csproj" Id="bf3f4224-7b54-4d7e-b6cd-faeb05354730" />
-  </Folder>
   <Folder Name="/Services/" />
   <Folder Name="/Services/CustomerService/">
     <Project Path="Customer.Api/Customer.Api.csproj" Id="51a06847-1033-42e4-aa1a-77288b49c033" />
@@ -24,6 +15,16 @@
     <Project Path="Merchant.Application/Merchant.Application.csproj" Id="9b3b8d3b-94f8-425b-950c-2590a54ea67e" />
     <Project Path="Merchant.Domain/Merchant.Domain.csproj" Id="112336e9-e3fc-4ac3-a11f-b64b2b637457" />
     <Project Path="Merchant.Infrastructure/Merchant.Infrastructure.csproj" Id="bdfb9dc1-71a3-4ef2-8803-7c2b42e0604e" />
+  </Folder>
+  <Folder Name="/Services/PaymentProvider/">
+    <Project Path="PaymentProvider.Api/PaymentProvider.Api.csproj" Id="50cad75a-f7d8-47dc-8556-05a318ebe295" />
+    <Project Path="PaymentProvider.Application/PaymentProvider.Application.csproj" Id="496ab2f4-a047-4f8c-98d5-c1edf49269f0" />
+    <Project Path="PaymentProvider.Domain/PaymentProvider.Domain.csproj" Id="c480af74-fc3e-434e-8007-147922bdad89" />
+    <Project Path="PaymentProvider.Infrastructure/PaymentProvider.Infrastructure.csproj" Id="5a463172-4b37-4314-89a0-d3fc9ab14e1c" />
+  </Folder>
+  <Folder Name="/Services/PaymentProvider/Integration/">
+    <Project Path="PaymentProvider.Integration.MMO/PaymentProvider.Integration.MMO.csproj" Id="0322b932-b190-4ed8-8dcb-bd8a22a68516" />
+    <Project Path="PaymentProvider.Integration.PawaPay/PaymentProvider.Integration.PawaPay.csproj" Id="bf3f4224-7b54-4d7e-b6cd-faeb05354730" />
   </Folder>
   <Folder Name="/Services/PaymentRequestService/">
     <Project Path="PaymentRequest.Api/PaymentRequest.Api.csproj" Id="8915f006-f460-4931-b105-09d9a0a4178d" />

@@ -18,7 +18,7 @@ public class PaymentsController(IMediator mediator) : ControllerBase
     {
         return Ok();
     }
-    [HttpPost("payments")]
+    [HttpPost("")]
     public async Task<IActionResult> Create([FromBody] CreatePaymentCommand command)
     {
         var result = await _mediator.Send(command);

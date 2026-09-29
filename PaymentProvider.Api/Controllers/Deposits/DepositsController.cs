@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using PaymentProvider.Application.Deposit.Command;
+﻿using PaymentProvider.Application.Deposit.Command;
 
 namespace PaymentProvider.Api.Controllers.Deposits;
 
@@ -12,6 +11,6 @@ public class DepositsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Deposit(InitiateDepositCommand command)
     {
         var result = await _mediator.Send(command);
-        return Ok(result);
+        return Ok(result.Value);
     }
 }

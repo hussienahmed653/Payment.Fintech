@@ -1,5 +1,4 @@
 ﻿using StackExchange.Redis;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace PaymentRequest.Application;
 
@@ -11,6 +10,14 @@ public static class DependancyInjection
             .AddFluentValidationService()
             .AddMapsterService()
             .AddRedisService(configuration);
+        services.AddHttpClient("PaymentGateway", client =>
+        {
+            client.BaseAddress = new Uri("https://localhost:7063/");
+        })
+        .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+        });
         return services;
     }
     private static IServiceCollection AddMediatRService(this IServiceCollection services)

@@ -8,5 +8,5 @@ public record PaymentRequest(
     int? CustomerId,
     Guid? CustomerGuid,
     decimal Amount,
-    PaymentCurrency Currency
+    string Currency
 );

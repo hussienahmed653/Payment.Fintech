@@ -1,4 +1,6 @@
-﻿namespace Customer.Api.Controllers;
+﻿using Customer.Application.Customer.Command.ProcessCustomerPayment;
+
+namespace Customer.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -36,6 +38,14 @@ public class CustomersController(IMediator mediator) : ControllerBase
         var result = await _mediator.Send(command);
         return result.IsSuccess
             ? CreatedAtAction(nameof(Get), new { Guid = result.Value.GuidId }, result.Value)
+            : result.ToProblem();
+    }
+    [HttpPost("proccess-customer-payment")]
+    public async Task<IActionResult> ProcessCustomerPayment([FromBody] ProcessCustomerPaymentCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.IsSuccess
+            ? Ok(result.Value)
             : result.ToProblem();
     }
     [HttpPut("update-customer")]

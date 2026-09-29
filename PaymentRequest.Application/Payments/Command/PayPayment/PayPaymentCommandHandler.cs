@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using System.Net.Http.Json;
 
 namespace PaymentRequest.Application.Payments.Command.PayPayment;
 
@@ -6,7 +7,8 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
                                                 IUnitOfWork unitOfWork,
                                                 IPaymentGatewayRepository paymentGatewayRepository,
                                                 IPaymentTransactionRepository paymentTransactionRepository,
-                                                ICacheService cacheService) : IRequestHandler<PayPaymentCommand, Result<PayPaymentResponse>>
+                                                ICacheService cacheService,
+                                                IHttpClientFactory httpClientFactory) : IRequestHandler<PayPaymentCommand, Result<PayPaymentResponse>>
 {
 
     private readonly IPaymentRepository _paymentRepository = paymentRepository;
@@ -41,14 +43,19 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
 
             var paymentTransaction = await BeginProcessingTransactionAsync(payment, request.reference, cancellationToken);
 
-            var gatewayResult = await _paymentGatewayRepository.ProcessPaymentAsync(payment.Reference, payment.Amount, payment.Currency.ToString(), cancellationToken);
-            if (!gatewayResult.IsSuccess)
-            {
-                await HandlePaymentFailureAsync(payment, paymentTransaction, gatewayResult.ErrorMessage!, cancellationToken);
-                return Result.Failure<PayPaymentResponse>(PaymentRequestErrors.PaymentProcessingFailed);
-            }
-            var response = await HandlePaymentSuccessAsync(payment, paymentTransaction, gatewayResult, cacheKey, cancellationToken);
-            return Result.Success(response);
+            var httpClient = httpClientFactory.CreateClient("PaymentGateway");
+
+            var response = await httpClient.PostAsJsonAsync($"api/deposits", payment, cancellationToken);
+            
+            //var gatewayResult = await _paymentGatewayRepository.ProcessPaymentAsync(payment.Reference, payment.Amount, payment.Currency.ToString(), cancellationToken);
+            //if (!gatewayResult.IsSuccess)
+            //{
+            //    await HandlePaymentFailureAsync(payment, paymentTransaction, gatewayResult.ErrorMessage!, cancellationToken);
+            //    return Result.Failure<PayPaymentResponse>(PaymentRequestErrors.PaymentProcessingFailed);
+            //}
+            //var response = await HandlePaymentSuccessAsync(payment, paymentTransaction, gatewayResult, cacheKey, cancellationToken);
+            var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            return Result.Success(responseContent.Adapt<PayPaymentResponse>());
 
         }
         finally
