@@ -44,8 +44,12 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
             var paymentTransaction = await BeginProcessingTransactionAsync(payment, request.reference, cancellationToken);
 
             var httpClient = httpClientFactory.CreateClient("PaymentGateway");
+            var req = new Dictionary<string, object>
+            {
+                { "request", payment.Reference }
+            };
 
-            var response = await httpClient.PostAsJsonAsync($"api/deposits", payment, cancellationToken);
+            var response = await httpClient.PostAsJsonAsync($"https://localhost:7062/api/deposits", req, cancellationToken);
             
             //var gatewayResult = await _paymentGatewayRepository.ProcessPaymentAsync(payment.Reference, payment.Amount, payment.Currency.ToString(), cancellationToken);
             //if (!gatewayResult.IsSuccess)

@@ -1,12 +1,15 @@
-﻿using System.Net.Http.Json;
+﻿using PaymentRequest.Application.Payments.Command.PayPayment;
+using System.Net.Http.Json;
 
 namespace PaymentRequest.Application.Merchant.Command.CreateMerchant;
 
 public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
                                          IPaymentRepository paymentRepository,
-                                         IHttpClientFactory httpClientFactory) : IRequestHandler<CreatePaymentCommand, Result<PaymentResponse>>
+                                         IHttpClientFactory httpClientFactory,
+                                         IMediator mediator) : IRequestHandler<CreatePaymentCommand, Result<PaymentResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMediator _mediator = mediator;
     private readonly IPaymentRepository _paymentRepository = paymentRepository;
 
     public async Task<Result<PaymentResponse>> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
@@ -19,21 +22,12 @@ public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
             return Result.Failure<PaymentResponse>(PaymentRequestErrors.MultibleRowsAffected);
 
         var idempotencyKey = Guid.NewGuid().ToString();
-        var httpClient = httpClientFactory.CreateClient("PaymentGateway");
-        var requestUri = $"api/payments/{payment.Reference}/pay";
-        var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri)
-        {
-            Content = JsonContent.Create(payment) // وضع البيانات في الـ Body
-        };
 
-        // 3. إضافة هيدر الـ Idempotency
-        httpRequest.Headers.Add("X-Idempotency-Key", idempotencyKey);
-        var response = await httpClient.SendAsync(httpRequest, cancellationToken);
-        var responseContent = await response.Content.ReadAsStringAsync(cancellationToken: cancellationToken);
-        if (!response.IsSuccessStatusCode)
-        {
-            return Result.Failure<PaymentResponse>(new Error("Failed to process payment.", responseContent, (int)response.StatusCode));
-        }
+        var PayResult = await _mediator.Send(new PayPaymentCommand(payment.Reference, idempotencyKey));
+
+        
+        if (!PayResult.IsSuccess)
+            return Result.Failure<PaymentResponse>(PayResult.Error);
         return Result.Success(payment.Adapt<PaymentResponse>());
     }
 }

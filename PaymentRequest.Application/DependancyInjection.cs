@@ -13,6 +13,7 @@ public static class DependancyInjection
         services.AddHttpClient("PaymentGateway", client =>
         {
             client.BaseAddress = new Uri("https://localhost:7063/");
+            //client.BaseAddress = new Uri("https://localhost:7062/");
         })
         .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
         {
