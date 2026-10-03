@@ -23,7 +23,7 @@ public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
 
         var idempotencyKey = Guid.NewGuid().ToString();
 
-        var PayResult = await _mediator.Send(new PayPaymentCommand(payment.Reference, idempotencyKey));
+        var PayResult = await _mediator.Send(new PayPaymentCommand(payment.Reference, idempotencyKey), cancellationToken);
 
         
         if (!PayResult.IsSuccess)

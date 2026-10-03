@@ -46,10 +46,29 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
             var httpClient = httpClientFactory.CreateClient("PaymentGateway");
             var req = new Dictionary<string, object>
             {
-                { "request", payment.Reference }
+                { "request", new {
+                        Deposit = Guid.NewGuid().ToString(),
+                        Amount = payment.Amount,
+                        Currency = payment.Currency.ToString(),
+                        Payer = new
+                        {
+                            Type = "MMO",
+                            AccountDetails = new
+                            {
+                                Provider = "MTN_MOMO_ZMB",
+                                PhoneNumber = "1321356445"
+                            }
+                        }
+                    }
+                }              
             };
 
             var response = await httpClient.PostAsJsonAsync($"https://localhost:7062/api/deposits", req, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorResponse = await response.Content.ReadAsStringAsync(cancellationToken);
+                return Result.Failure<PayPaymentResponse>(new Error("Provider.Failed", errorResponse, (int)response.StatusCode));
+            }
             
             //var gatewayResult = await _paymentGatewayRepository.ProcessPaymentAsync(payment.Reference, payment.Amount, payment.Currency.ToString(), cancellationToken);
             //if (!gatewayResult.IsSuccess)
@@ -58,8 +77,9 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
             //    return Result.Failure<PayPaymentResponse>(PaymentRequestErrors.PaymentProcessingFailed);
             //}
             //var response = await HandlePaymentSuccessAsync(payment, paymentTransaction, gatewayResult, cacheKey, cancellationToken);
-            var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            return Result.Success(responseContent.Adapt<PayPaymentResponse>());
+            var ProviderResult = await response.Content.ReadFromJsonAsync<JsonElement>(cancellationToken);
+            Console.WriteLine(ProviderResult);
+            return Result.Success(ProviderResult.Adapt<PayPaymentResponse>());
 
         }
         finally
