@@ -1,4 +1,5 @@
 ﻿using PaymentProvider.Application.Deposit.Command;
+using ResultPattern.Abstraction;
 
 namespace PaymentProvider.Api.Controllers.Deposits;
 
@@ -11,6 +12,8 @@ public class DepositsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Deposit(InitiateDepositCommand command)
     {
         var result = await _mediator.Send(command);
-        return Ok(result.Value);
+        return result.IsSuccess 
+            ? Ok(result.Value) 
+            : result.ToProblem();
     }
 }

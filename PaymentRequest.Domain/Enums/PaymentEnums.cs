@@ -21,5 +21,6 @@ public enum PaymentCurrency
     CHF,
     CNY,
     SEK,
-    NZD
+    NZD,
+    ZMW
 }

@@ -9,7 +9,10 @@ public class InitiateDepositCommandHandler(ISelectorFactory selectorFactory) : I
     public async Task<Result<object>> Handle(InitiateDepositCommand request, CancellationToken cancellationToken)
     {
         var provider = _selectorFactory.Select((int)request.request.Payer.Type);
-        var result = await provider.MakeRequest(request.request);
-        return result;
+        return await provider.MakeRequest(request.request);
+
+        //return result.IsSuccess
+        //    ? Result.Success(result.Value)
+        //    : Result.Failure<InitiateDepositResponse>(result.Error);
     }
 }

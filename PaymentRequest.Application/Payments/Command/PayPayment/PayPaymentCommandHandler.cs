@@ -1,5 +1,5 @@
-﻿using Azure.Core;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
+using System.Net.NetworkInformation;
 
 namespace PaymentRequest.Application.Payments.Command.PayPayment;
 
@@ -47,8 +47,8 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
             var req = new Dictionary<string, object>
             {
                 { "request", new {
-                        Deposit = Guid.NewGuid().ToString(),
-                        Amount = payment.Amount,
+                        DepositId = Guid.NewGuid().ToString(),
+                        Amount = payment.Amount.ToString(),
                         Currency = payment.Currency.ToString(),
                         Payer = new
                         {
@@ -56,7 +56,7 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
                             AccountDetails = new
                             {
                                 Provider = "MTN_MOMO_ZMB",
-                                PhoneNumber = "1321356445"
+                                PhoneNumber = "260763456789"
                             }
                         }
                     }
@@ -64,12 +64,17 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
             };
 
             var response = await httpClient.PostAsJsonAsync($"https://localhost:7062/api/deposits", req, cancellationToken);
+            var body = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
-                var errorResponse = await response.Content.ReadAsStringAsync(cancellationToken);
-                return Result.Failure<PayPaymentResponse>(new Error("Provider.Failed", errorResponse, (int)response.StatusCode));
+                var errorResponse = await HttpErrorReader.ReadErrorAsync(response, cancellationToken);
+
+                await HandlePaymentFailureAsync(payment, paymentTransaction, errorResponse.Description, cancellationToken);
+
+                return Result.Failure<PayPaymentResponse>(errorResponse);
             }
             
+            return Result.Success(new PayPaymentResponse("","","",0.0m,""));
             //var gatewayResult = await _paymentGatewayRepository.ProcessPaymentAsync(payment.Reference, payment.Amount, payment.Currency.ToString(), cancellationToken);
             //if (!gatewayResult.IsSuccess)
             //{
@@ -77,9 +82,6 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
             //    return Result.Failure<PayPaymentResponse>(PaymentRequestErrors.PaymentProcessingFailed);
             //}
             //var response = await HandlePaymentSuccessAsync(payment, paymentTransaction, gatewayResult, cacheKey, cancellationToken);
-            var ProviderResult = await response.Content.ReadFromJsonAsync<JsonElement>(cancellationToken);
-            Console.WriteLine(ProviderResult);
-            return Result.Success(ProviderResult.Adapt<PayPaymentResponse>());
 
         }
         finally
@@ -150,5 +152,28 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
         None = 0,
         PaymentNotFound = 1,
         StatusNotValidForPayment = 2,
+    }
+}
+
+public static class HttpErrorReader
+{
+    public static async Task<Error> ReadErrorAsync(
+        HttpResponseMessage response, CancellationToken ct)
+    {
+        var raw = await response.Content.ReadAsStringAsync(ct);
+        try
+        {
+            using var doc = JsonDocument.Parse(raw);
+            if (doc.RootElement.TryGetProperty("errors", out var errors) &&
+                errors.ValueKind == JsonValueKind.Object)
+            {
+                var first = errors.EnumerateObject().First();
+                var description = first.Value.EnumerateArray().First().GetString() ?? raw;
+                return new Error(first.Name, description, (int)response.StatusCode);
+            }
+        }
+        catch (Exception ex) when (ex is JsonException or InvalidOperationException) { }
+
+        return new Error("Downstream.Failed", raw, (int)response.StatusCode);
     }
 }

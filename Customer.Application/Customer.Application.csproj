@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Customer.Domain\Customer.Domain.csproj" />
+    <ProjectReference Include="..\PaymentRequest.Application\PaymentRequest.Application.csproj" />
     <ProjectReference Include="..\ResultPattern\ResultPattern.csproj" />
     <ProjectReference Include="..\ValidationPipeline\ValidationPipeline.csproj" />
   </ItemGroup>

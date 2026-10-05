@@ -6,8 +6,8 @@ public record CustomerPaymentRequest(
     int CustomerId,
     Guid CustomerGuid,
     decimal Amount,
-    Currency Currency,
+    string Currency,
     string Type,
-    string ProviderNetwork,
+    string Provider,
     string PhoneNumber
 );

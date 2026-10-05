@@ -1,27 +1,29 @@
-﻿using System.Net.Http.Json;
+﻿using PaymentRequest.Application.Payments.Command.PayPayment;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Customer.Application.Customer.Command.ProcessCustomerPayment;
 
 public class ProcessCustomerPaymentCommandHandler(IHttpClientFactory httpClientFactory) : IRequestHandler<ProcessCustomerPaymentCommand, Result<object>>
 {
-    //private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-
     public async Task<Result<object>> Handle(ProcessCustomerPaymentCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var client = httpClientFactory.CreateClient("PaymentGateway");
+            //any business logic
+            // go to payment gateway and then call customer for any update instead of call customerfrom postman
+            //
+            var client = httpClientFactory.CreateClient("PaymentGateway");//ensure this key map to actuall url in Program.cs
             var response = await client.PostAsJsonAsync("api/payments", request, cancellationToken);
-            if (response == null)
-            {
-                return Result.Failure<object>(new Error("Failed to process customer payment", "No response received from the payment gateway", StatusCodes.Status500InternalServerError));
-            }
             if (!response.IsSuccessStatusCode)
             {
-                var errorMessage = await response.Content.ReadAsStringAsync(cancellationToken);
-                return Result.Failure<object>(new Error("Failed to process customer payment", errorMessage, 500));
+                var error = await HttpErrorReader.ReadErrorAsync(response, cancellationToken);
+                return Result.Failure<object>(error);
             }
-            return Result.Success(response.Content.ReadFromJsonAsync<object>(cancellationToken).Result!);
+
+            var result = await response.Content
+                .ReadFromJsonAsync<JsonElement>(cancellationToken: cancellationToken);
+            return Result.Success<object>(result);
         }
         catch
         {

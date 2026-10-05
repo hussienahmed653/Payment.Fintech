@@ -10,3 +10,8 @@ public record PaymentRequest(
     decimal Amount,
     string Currency
 );
+public class Hussein
+{
+    //yourdata
+    //public Pawapay pawapay { get; set; }
+}
