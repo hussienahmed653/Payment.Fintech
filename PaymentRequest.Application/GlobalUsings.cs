@@ -9,7 +9,7 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Payment.Fintech.Domain.Errors;
 global using PaymentRequest.Application.Common.Contracts.Merchants;
 global using PaymentRequest.Application.Common.Contracts.PaymentRequests;
-global using PaymentRequest.Application.Common.Interfaces.Merchants;
+global using PaymentRequest.Application.Common.Interfaces.PaymentRequests;
 global using PaymentRequest.Application.Common.Interfaces.Payments;
 global using PaymentRequest.Application.Common.Interfaces.UnitOfWork;
 global using PaymentRequest.Application.Errors;

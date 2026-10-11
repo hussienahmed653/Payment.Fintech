@@ -28,6 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PaymentRequest.Domain\PaymentRequest.Domain.csproj" />
     <ProjectReference Include="..\ResultPattern\ResultPattern.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
     <ProjectReference Include="..\ValidationPipeline\ValidationPipeline.csproj" />
   </ItemGroup>
 

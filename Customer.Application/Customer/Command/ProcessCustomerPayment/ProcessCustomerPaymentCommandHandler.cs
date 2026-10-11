@@ -1,5 +1,4 @@
-﻿using PaymentRequest.Application.Payments.Command.PayPayment;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace Customer.Application.Customer.Command.ProcessCustomerPayment;
@@ -17,8 +16,8 @@ public class ProcessCustomerPaymentCommandHandler(IHttpClientFactory httpClientF
             var response = await client.PostAsJsonAsync("api/payments", request, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
-                var error = await HttpErrorReader.ReadErrorAsync(response, cancellationToken);
-                return Result.Failure<object>(error);
+                //var error = await HttpErrorReader.ReadErrorAsync(response, cancellationToken);
+                return Result.Success();
             }
 
             var result = await response.Content

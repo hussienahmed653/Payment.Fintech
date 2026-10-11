@@ -1,4 +1,7 @@
-﻿namespace PaymentRequest.Application.Common.Mapping;
+﻿using Shared;
+using Shared.Sections;
+
+namespace PaymentRequest.Application.Common.Mapping;
 
 internal class PaymentRequestConfig : IRegister
 {
@@ -16,5 +19,7 @@ internal class PaymentRequestConfig : IRegister
             .Map(dest => dest.PaymentRequestGuid, src => src.payment.GuidId)
             .Map(dest => dest.Amount, src => src.payment.Amount)
             .Map(dest => dest.IdemPotency, src => src.idempotency);
+        config.NewConfig<Domain.Entities.PaymentRequest, PaymentResponse>()
+            .Map(dest => dest.Status, src => src.Status.ToString());
     }
 }

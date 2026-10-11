@@ -27,11 +27,11 @@
   <ItemGroup>
     <ProjectReference Include="..\PaymentProvider.Domain\PaymentProvider.Domain.csproj" />
     <ProjectReference Include="..\ResultPattern\ResultPattern.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
     <ProjectReference Include="..\ValidationPipeline\ValidationPipeline.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Mapping\" />
     <Folder Include="Deposit\Query\" />
   </ItemGroup>
 

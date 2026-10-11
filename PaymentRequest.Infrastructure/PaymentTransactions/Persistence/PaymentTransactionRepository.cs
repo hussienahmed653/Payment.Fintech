@@ -11,4 +11,9 @@ internal class PaymentTransactionRepository(ApplicationDbContext context) : IPay
         await _context.PaymentTransactions
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.PaymentRequestGuid == paymentRequestGuid, cancellationToken) ?? default!;
+    public async Task UpdateAsync(Guid guid, PaymentStatus status, CancellationToken cancellationToken = default)
+    {
+        var paymentTransaction = await _context.PaymentTransactions.SingleOrDefaultAsync(p => p.GuidId == guid, cancellationToken);
+        paymentTransaction?.Status = status;
+    }
 }

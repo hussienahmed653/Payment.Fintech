@@ -1,3 +1,5 @@
-﻿namespace Customer.Application.Customer.Command.UpdateCustomer;
+﻿using Shared;
 
-public record UpdateCustomerCommand(UpdateCustomerRequest Request) : IRequest<Result<CustomerResponse>>;
+namespace Customer.Application.Customer.Command.UpdateCustomer;
+
+public record UpdateCustomerCommand(PaymentEnvelope? Request) : IRequest<Result<CustomerResponse>>;

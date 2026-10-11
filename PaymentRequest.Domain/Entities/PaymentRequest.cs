@@ -14,7 +14,7 @@ public sealed class PaymentRequest : AuditableEntity
     public int? CustomerId { get; set; } = null;
     public Guid? CustomerGuid { get; set; } = null;
     public decimal Amount { get; set; }
-    public PaymentCurrency Currency { get; private set; }
+    public PaymentCurrency Currency { get; set; }
     public PaymentStatus Status { get; set; }
     public PaymentRequest()
     {

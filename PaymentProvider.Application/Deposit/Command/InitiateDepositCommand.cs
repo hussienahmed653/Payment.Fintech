@@ -1,6 +1,7 @@
-﻿using PaymentProvider.Application.Common.Contracts.Deposit;
-using ResultPattern.Abstraction;
+﻿using ResultPattern.Abstraction;
+using Shared;
+using Shared.Sections;
 
 namespace PaymentProvider.Application.Deposit.Command;
 
-public record InitiateDepositCommand(InitiateDepositRequest request) : IRequest<Result<object>>;
+public record InitiateDepositCommand(PaymentEnvelope request) : IRequest<Result<object>>;

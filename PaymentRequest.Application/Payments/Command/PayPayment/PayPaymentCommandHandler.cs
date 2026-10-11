@@ -41,47 +41,47 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
                 return Result.Failure<PayPaymentResponse>(PaymentTransactionErrors.DuplicateSubmissionNotAllowed);
             }
 
-            var paymentTransaction = await BeginProcessingTransactionAsync(payment, request.reference, cancellationToken);
+            var (paymentTransaction, TotalChanges) = await BeginProcessingTransactionAsync(payment, request.reference, cancellationToken);
 
-            var httpClient = httpClientFactory.CreateClient("PaymentGateway");
-            var req = new Dictionary<string, object>
+            //var httpClient = httpClientFactory.CreateClient("PaymentGateway");
+            //var req = new Dictionary<string, object>
+            //{
+            //    { "request", new {
+            //            DepositId = Guid.NewGuid().ToString(),
+            //            Amount = payment.Amount.ToString(),
+            //            Currency = "ZMW",
+            //            Payer = new
+            //            {
+            //                Type = "MMO",
+            //                AccountDetails = new
+            //                {
+            //                    Provider = "MTN_MOMO_ZMB",
+            //                    PhoneNumber = "260763456789"
+            //                }
+            //            }
+            //        }
+            //    }              
+            //};
+
+            //var response = await httpClient.PostAsJsonAsync($"https://localhost:7062/api/deposits", req, cancellationToken);
+            //var body = await response.Content.ReadAsStringAsync();
+            if (TotalChanges == 0)
             {
-                { "request", new {
-                        DepositId = Guid.NewGuid().ToString(),
-                        Amount = payment.Amount.ToString(),
-                        Currency = payment.Currency.ToString(),
-                        Payer = new
-                        {
-                            Type = "MMO",
-                            AccountDetails = new
-                            {
-                                Provider = "MTN_MOMO_ZMB",
-                                PhoneNumber = "260763456789"
-                            }
-                        }
-                    }
-                }              
-            };
+                //var errorResponse = await HttpErrorReader.ReadErrorAsync(response, cancellationToken);
 
-            var response = await httpClient.PostAsJsonAsync($"https://localhost:7062/api/deposits", req, cancellationToken);
-            var body = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorResponse = await HttpErrorReader.ReadErrorAsync(response, cancellationToken);
+                await HandlePaymentFailureAsync(payment, paymentTransaction, "Failed to save payment transaction", cancellationToken);
 
-                await HandlePaymentFailureAsync(payment, paymentTransaction, errorResponse.Description, cancellationToken);
-
-                return Result.Failure<PayPaymentResponse>(errorResponse);
+                return Result.Failure<PayPaymentResponse>(new Error("Failed to save payment transaction", "No rows were affected in the database.", StatusCodes.Status500InternalServerError));
             }
-            
-            return Result.Success(new PayPaymentResponse("","","",0.0m,""));
+
+            //return Result.Success(new PayPaymentResponse("","","",0.0m,""));
             //var gatewayResult = await _paymentGatewayRepository.ProcessPaymentAsync(payment.Reference, payment.Amount, payment.Currency.ToString(), cancellationToken);
             //if (!gatewayResult.IsSuccess)
             //{
             //    await HandlePaymentFailureAsync(payment, paymentTransaction, gatewayResult.ErrorMessage!, cancellationToken);
             //    return Result.Failure<PayPaymentResponse>(PaymentRequestErrors.PaymentProcessingFailed);
             //}
-            //var response = await HandlePaymentSuccessAsync(payment, paymentTransaction, gatewayResult, cacheKey, cancellationToken);
+            return Result.Success(await HandlePaymentSuccessAsync(payment, paymentTransaction, cacheKey, cancellationToken));
 
         }
         finally
@@ -89,20 +89,12 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
             await _cacheService.ReleaseLockAsync(lockKey, lockvalue, cancellationToken);
         }
     }
-    private async Task<bool> ReferenceInCache(string reference, string cacheKey, CancellationToken cancellationToken = default!)
-    {
-        var cachedResponse = await _cacheService.GetAsync<bool>(cacheKey, cancellationToken);
-        return cachedResponse
-            ? true
-            : false;
-    }
-    private async Task<bool> TryAcquirePaymentLockAsync(string reference, string lockKey, string lockvalue, CancellationToken cancellationToken = default!)
-    {
-        var lockaquired = await _cacheService.AcquireLockAsync(lockKey, lockvalue, TimeSpan.FromSeconds(30), cancellationToken);
-        return lockaquired
-            ? true
-            : false;
-    }
+    private async Task<bool> ReferenceInCache(string reference, string cacheKey, CancellationToken cancellationToken = default!) =>
+        await _cacheService.GetAsync<bool>(cacheKey, cancellationToken);
+    
+    private async Task<bool> TryAcquirePaymentLockAsync(string reference, string lockKey, string lockvalue, CancellationToken cancellationToken = default!) =>
+        await _cacheService.AcquireLockAsync(lockKey, lockvalue, TimeSpan.FromSeconds(30), cancellationToken);
+
     private async Task<(Domain.Entities.PaymentRequest? payment, Errors error)> IsValidPaymentRequest(string reference, CancellationToken cancellationToken = default!)
     {
         var payment = await _paymentRepository.GetPaymentByReferenceAsync(reference, cancellationToken);
@@ -114,32 +106,32 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
 
         return (payment, Errors.None);
     }
-    private async Task<PaymentTransaction> BeginProcessingTransactionAsync(Domain.Entities.PaymentRequest payment, string reference, CancellationToken cancellationToken = default!)
+    private async Task<(PaymentTransaction paymentTransaction, int TotalChanges)> BeginProcessingTransactionAsync(Domain.Entities.PaymentRequest payment, string reference, CancellationToken cancellationToken = default!)
     {
         payment.Status = PaymentStatus.Processing;
         var paymentTransaction = (payment, reference).Adapt<PaymentTransaction>();
 
         await _paymentTransactionRepository.AddAsync(paymentTransaction, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return paymentTransaction;
+        var TotalChanges = await _unitOfWork.SaveChangesAsync(cancellationToken);
+        return (paymentTransaction, TotalChanges);
     }
     private async Task HandlePaymentFailureAsync(Domain.Entities.PaymentRequest payment, PaymentTransaction paymentTransaction, string gatewayErrorMessage, CancellationToken cancellationToken = default!)
     {
-        payment.Status = PaymentStatus.Failed;
+        //payment.Status = PaymentStatus.Failed;
         paymentTransaction.Status = PaymentStatus.Failed;
         paymentTransaction.FailureResponse = gatewayErrorMessage;
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        //await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
     private async Task<PayPaymentResponse> HandlePaymentSuccessAsync(Domain.Entities.PaymentRequest payment,
                                                  PaymentTransaction paymentTransaction,
-                                                 PaymentGatewayResponse gatewayResult,
+                                                 //PaymentGatewayResponse gatewayResult,
                                                  string cacheKey,
                                                  CancellationToken cancellationToken = default!)
     {
         payment.Status = PaymentStatus.Successful;
         paymentTransaction.Status = PaymentStatus.Successful;
-        paymentTransaction.ExternalTransactionId = gatewayResult.TransactionId;
-        var response = (payment, gatewayResult).Adapt<PayPaymentResponse>();
+        paymentTransaction.ExternalTransactionId = null;
+        var response = payment.Adapt<PayPaymentResponse>();
         paymentTransaction.ResponsePayload = JsonSerializer.Serialize(response);
         await _cacheService.SetAsync(cacheKey, TimeSpan.FromMinutes(30), cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -155,25 +147,25 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
     }
 }
 
-public static class HttpErrorReader
-{
-    public static async Task<Error> ReadErrorAsync(
-        HttpResponseMessage response, CancellationToken ct)
-    {
-        var raw = await response.Content.ReadAsStringAsync(ct);
-        try
-        {
-            using var doc = JsonDocument.Parse(raw);
-            if (doc.RootElement.TryGetProperty("errors", out var errors) &&
-                errors.ValueKind == JsonValueKind.Object)
-            {
-                var first = errors.EnumerateObject().First();
-                var description = first.Value.EnumerateArray().First().GetString() ?? raw;
-                return new Error(first.Name, description, (int)response.StatusCode);
-            }
-        }
-        catch (Exception ex) when (ex is JsonException or InvalidOperationException) { }
+//public static class HttpErrorReader
+//{
+//    public static async Task<Error> ReadErrorAsync(
+//        HttpResponseMessage response, CancellationToken ct)
+//    {
+//        var raw = await response.Content.ReadAsStringAsync(ct);
+//        try
+//        {
+//            using var doc = JsonDocument.Parse(raw);
+//            if (doc.RootElement.TryGetProperty("errors", out var errors) &&
+//                errors.ValueKind == JsonValueKind.Object)
+//            {
+//                var first = errors.EnumerateObject().First();
+//                var description = first.Value.EnumerateArray().First().GetString() ?? raw;
+//                return new Error(first.Name, description, (int)response.StatusCode);
+//            }
+//        }
+//        catch (Exception ex) when (ex is JsonException or InvalidOperationException) { }
 
-        return new Error("Downstream.Failed", raw, (int)response.StatusCode);
-    }
-}
+//        return new Error("Downstream.Failed", raw, (int)response.StatusCode);
+//    }
+//}

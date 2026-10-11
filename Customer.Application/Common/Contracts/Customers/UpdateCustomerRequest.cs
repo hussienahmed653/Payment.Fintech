@@ -1,7 +1,7 @@
 ﻿namespace Customer.Application.Common.Contracts.Customers;
 
 public record UpdateCustomerRequest(
-    Guid Guid,
+    Guid CustomerGuid,
     string? ContactFirstName,
     string? ContactLastName,
     string? Email,

@@ -1,5 +1,6 @@
 ﻿using MediatR;
+using Shared;
 
-namespace PaymentRequest.Application.Merchant.Command.CreateMerchant;
+namespace PaymentRequest.Application.Payments.Command.CreatePayment;
 
-public record CreatePaymentCommand(Common.Contracts.Merchants.PaymentRequest Request) : IRequest<Result<PaymentResponse>>;
+public record CreatePaymentCommand(PaymentEnvelope Request) : IRequest<Result<PaymentResponse>>;

@@ -1,4 +1,6 @@
-﻿namespace PaymentRequest.Api.Controllers;
+﻿using PaymentRequest.Application.Payments.Command.CreatePayment;
+
+namespace PaymentRequest.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -26,13 +28,27 @@ public class PaymentsController(IMediator mediator) : ControllerBase
             ? CreatedAtAction(nameof(Get), new { Guid = result.Value.GuidId }, result.Value)
             : result.ToProblem();
     }
-    [HttpPost("{reference}/pay")]
-    public async Task<IActionResult> Pay([FromRoute] string reference, [FromHeader(Name ="X-Idempotency-Key")] string idemPotencyId)
+    //[HttpPost("{reference}/pay")]
+    //public async Task<IActionResult> Pay([FromRoute] string reference, [FromHeader(Name ="X-Idempotency-Key")] string idemPotencyId)
+    //{
+    //    var command = new PayPaymentCommand(reference, idemPotencyId);
+    //    var result = await _mediator.Send(command);
+    //    return result.IsSuccess
+    //        ? Ok(result.Value)
+    //        : result.ToProblem();
+    //}
+
+    [HttpPost("pay")]
+    public async Task<IActionResult> Pay([FromBody] CreatePaymentCommand command)
     {
-        var command = new PayPaymentCommand(reference, idemPotencyId);
         var result = await _mediator.Send(command);
         return result.IsSuccess
             ? Ok(result.Value)
             : result.ToProblem();
+    }
+    [HttpPut("transaction/{Guid}/toggle-status")]
+    public async Task<IActionResult> ToggleStatus([FromRoute] Guid Guid)
+    {
+        return Ok();
     }
 }
