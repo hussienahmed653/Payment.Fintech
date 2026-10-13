@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using PaymentRequest.Application.Common;
+using StackExchange.Redis;
 
 namespace PaymentRequest.Application;
 
@@ -10,16 +11,18 @@ public static class DependancyInjection
             .AddFluentValidationService()
             .AddMapsterService()
             .AddRedisService(configuration);
-        services.AddHttpClient("PaymentGateway", client =>
-        {
-            client.BaseAddress = new Uri("https://localhost:7060/");
-            //client.BaseAddress = new Uri("https://localhost:7063/");
-            //client.BaseAddress = new Uri("https://localhost:7062/");
-        })
-        .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-        {
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-        });
+        ////services.AddHttpClient("PaymentGateway", client =>
+        ////{
+        ////    client.BaseAddress = new Uri("https://localhost:7060/");
+        ////    //client.BaseAddress = new Uri("https://localhost:7063/");
+        ////    //client.BaseAddress = new Uri("https://localhost:7062/");
+        ////})
+        //.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        //{
+        //    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+        //});
+        services.AddHttpClient();
+        services.Configure<ServiceUrlsOptions>(configuration.GetSection(ServiceUrlsOptions.SectionName));
         return services;
     }
     private static IServiceCollection AddMediatRService(this IServiceCollection services)
