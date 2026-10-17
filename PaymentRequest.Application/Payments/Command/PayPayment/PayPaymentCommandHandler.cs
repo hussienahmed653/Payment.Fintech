@@ -7,8 +7,7 @@ public class PayPaymentCommandHandler(IPaymentRepository paymentRepository,
                                                 IUnitOfWork unitOfWork,
                                                 IPaymentGatewayRepository paymentGatewayRepository,
                                                 IPaymentTransactionRepository paymentTransactionRepository,
-                                                ICacheService cacheService,
-                                                IHttpClientFactory httpClientFactory) : IRequestHandler<PayPaymentCommand, Result<PayPaymentResponse>>
+                                                ICacheService cacheService) : IRequestHandler<PayPaymentCommand, Result<PayPaymentResponse>>
 {
 
     private readonly IPaymentRepository _paymentRepository = paymentRepository;

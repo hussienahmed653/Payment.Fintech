@@ -1,4 +1,7 @@
-﻿using ValidationPipeline.Behaviors;
+﻿using MassTransit;
+using PaymentProvider.Application.Messaging;
+using Shared.Messaging;
+using ValidationPipeline.Behaviors;
 
 namespace PaymentProvider.Application;
 
@@ -8,7 +11,20 @@ public static class DependancyInjection
     {
         services.AddMediatRService()
             .AddFluentValidationService()
-            .AddMapsterService();
+            .AddMapsterService()
+            .AddRabbitMqMessaging(
+                configuration,
+                configureBus: x =>
+                {
+                    x.AddConsumer<InitiateDepositConsumer>();
+                },
+                configureEndpoints: (context, cfg) =>
+                {
+                    cfg.ReceiveEndpoint(QueueNames.InitiateDeposit, e =>
+                    {
+                        e.ConfigureConsumer<InitiateDepositConsumer>(context);
+                    });
+                });
         return services;
     }
     private static IServiceCollection AddMediatRService(this IServiceCollection services)

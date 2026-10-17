@@ -1,4 +1,6 @@
-﻿using PaymentRequest.Application.Common;
+﻿using MassTransit;
+using PaymentRequest.Application.Messaging;
+using Shared.Messaging;
 using StackExchange.Redis;
 
 namespace PaymentRequest.Application;
@@ -10,19 +12,22 @@ public static class DependancyInjection
         services.AddMediatRService()
             .AddFluentValidationService()
             .AddMapsterService()
-            .AddRedisService(configuration);
-        ////services.AddHttpClient("PaymentGateway", client =>
-        ////{
-        ////    client.BaseAddress = new Uri("https://localhost:7060/");
-        ////    //client.BaseAddress = new Uri("https://localhost:7063/");
-        ////    //client.BaseAddress = new Uri("https://localhost:7062/");
-        ////})
-        //.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-        //{
-        //    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-        //});
-        services.AddHttpClient();
-        services.Configure<ServiceUrlsOptions>(configuration.GetSection(ServiceUrlsOptions.SectionName));
+            .AddRedisService(configuration)
+            .AddRabbitMqMessaging(
+                configuration,
+                configureBus: x =>
+                {
+                    x.AddConsumer<CreatePaymentConsumer>();
+                    x.AddRequestClient<UpdateCustomerMessage>(new Uri($"queue:{QueueNames.UpdateCustomer}"));
+                    x.AddRequestClient<InitiateDepositMessage>(new Uri($"queue:{QueueNames.InitiateDeposit}"));
+                },
+                configureEndpoints: (context, cfg) =>
+                {
+                    cfg.ReceiveEndpoint(QueueNames.CreatePayment, e =>
+                    {
+                        e.ConfigureConsumer<CreatePaymentConsumer>(context);
+                    });
+                });
         return services;
     }
     private static IServiceCollection AddMediatRService(this IServiceCollection services)

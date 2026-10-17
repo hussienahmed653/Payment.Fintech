@@ -1,30 +1,20 @@
-﻿using Microsoft.Extensions.Options;
-using PaymentRequest.Application.Common;
+﻿using MassTransit;
 using PaymentRequest.Application.Payments.Command.PayPayment;
-using System.Net.Http.Json;
-using System.Text.Json.Serialization;
+using Shared.Messaging;
 
 namespace PaymentRequest.Application.Payments.Command.CreatePayment;
 
 public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
                                          IPaymentRepository paymentRepository,
-                                         IHttpClientFactory httpClientFactory,
                                          IMediator mediator,
                                          IPaymentTransactionRepository paymentTransactionRepository,
-                                         IOptions<ServiceUrlsOptions> serviceUrlsOptions) : IRequestHandler<CreatePaymentCommand, Result<PaymentResponse>>
+                                         IRequestClient<UpdateCustomerMessage> updateCustomerClient,
+                                         IRequestClient<InitiateDepositMessage> initiateDepositClient) : IRequestHandler<CreatePaymentCommand, Result<PaymentResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMediator _mediator = mediator;
     private readonly IPaymentRepository _paymentRepository = paymentRepository;
     private readonly IPaymentTransactionRepository _paymentTransactionRepository = paymentTransactionRepository;
-    private readonly ServiceUrlsOptions _serviceUrlsOptions = serviceUrlsOptions.Value;
-    private readonly JsonSerializerOptions _options = new JsonSerializerOptions
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        Converters = { new JsonStringEnumConverter() }
-
-    };
 
     public async Task<Result<PaymentResponse>> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
     {
@@ -33,55 +23,79 @@ public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
             var payment = await _paymentRepository.CreatePaymentRequestAsync(request.Request.payment, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var customerClient = httpClientFactory.CreateClient(_serviceUrlsOptions.CustomerClient);
-            //change Request to pass CustomerSection
-            var customerResponse = await customerClient.PutAsJsonAsync(_serviceUrlsOptions.CustomerService, request, _options, cancellationToken);
+            var customerResult = await SendAsync(
+                updateCustomerClient,
+                new UpdateCustomerMessage(request.Request),
+                cancellationToken);
 
-            if(!customerResponse.IsSuccessStatusCode)
-            {
-                var body = await customerResponse.Content.ReadAsStringAsync(cancellationToken);
-                await _paymentRepository.UpdateStatus(payment.GuidId, PaymentStatus.Failed);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-                return Result.Failure<PaymentResponse>(new Error("Failed to update customer", body, (int)customerResponse.StatusCode));
-            }
-
-            //var TotalChanges = await _unitOfWork.SaveChangesAsync(cancellationToken);
-            //if (TotalChanges == 0)
-            //    return Result.Failure<PaymentResponse>(PaymentRequestErrors.ZeroRowsAffected);
-            //if (TotalChanges > 1)
-            //    return Result.Failure<PaymentResponse>(PaymentRequestErrors.MultibleRowsAffected);
-
-            var PaymentTransactionResponse = await _mediator.Send(new PayPaymentCommand(payment.Reference, request.Request.transaction!.IdempotencyId), cancellationToken);
-
-   
-            if (PaymentTransactionResponse.IsFailure)
+            if (customerResult.IsFailure)
             {
                 await _paymentRepository.UpdateStatus(payment.GuidId, PaymentStatus.Failed);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
-                return Result.Failure<PaymentResponse>(PaymentTransactionResponse.Error);
+                return Result.Failure<PaymentResponse>(customerResult.Error);
             }
 
-            var paymentProviderClient = httpClientFactory.CreateClient(_serviceUrlsOptions.PaymentProviderClient);
+            var paymentTransactionResponse = await _mediator.Send(new PayPaymentCommand(payment.Reference, request.Request.transaction!.IdempotencyId), cancellationToken);
 
-            var paymentProviderResponse = await paymentProviderClient.PostAsJsonAsync(_serviceUrlsOptions.PaymentProviderService, request, _options, cancellationToken);
-            var paymentProviderResponsebody = await paymentProviderResponse.Content.ReadAsStringAsync(cancellationToken);
-
-            if(!paymentProviderResponse.IsSuccessStatusCode)
+            if (paymentTransactionResponse.IsFailure)
             {
                 await _paymentRepository.UpdateStatus(payment.GuidId, PaymentStatus.Failed);
-                await _paymentTransactionRepository.UpdateAsync(PaymentTransactionResponse.Value.GuidId, PaymentStatus.Failed, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
-                return Result.Failure<PaymentResponse>(new Error("Failed to process payment with provider", paymentProviderResponsebody, (int)paymentProviderResponse.StatusCode));
+                return Result.Failure<PaymentResponse>(paymentTransactionResponse.Error);
             }
 
+            var paymentProviderResult = await SendAsync(
+                initiateDepositClient,
+                new InitiateDepositMessage(request.Request),
+                cancellationToken);
+
+            if (paymentProviderResult.IsFailure)
+            {
+                await _paymentRepository.UpdateStatus(payment.GuidId, PaymentStatus.Failed);
+                await _paymentTransactionRepository.UpdateAsync(paymentTransactionResponse.Value.GuidId, PaymentStatus.Failed, cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                return Result.Failure<PaymentResponse>(paymentProviderResult.Error);
+            }
 
             var response = (request.Request, payment).Adapt<PaymentResponse>();
-            //SHOULD RETURN THE RESPONSE FROM THE PAYMENT PROVIDER INSTEAD OF THE REQUEST
             return Result.Success(response);
         }
         catch
         {
             return Result.Failure<PaymentResponse>(PaymentRequestErrors.PaymentProcessingFailed);
+        }
+    }
+
+    private static async Task<Result> SendAsync<TMessage>(
+        IRequestClient<TMessage> client,
+        TMessage message,
+        CancellationToken cancellationToken)
+        where TMessage : class
+    {
+        try
+        {
+            var response = await client.GetResponse<MessagingCompleted, MessagingFaulted>(
+                message,
+                cancellationToken,
+                RequestTimeout.After(s: 30));
+
+            if (response.Is(out Response<MessagingFaulted>? faulted))
+            {
+                return Result.Failure(new Error(
+                    faulted.Message.Code,
+                    faulted.Message.Description,
+                    faulted.Message.StatusCode ?? StatusCodes.Status502BadGateway));
+            }
+
+            return Result.Success();
+        }
+        catch (RequestTimeoutException)
+        {
+            return Result.Failure(new Error("Messaging.Timeout", "Downstream service did not respond in time.", StatusCodes.Status504GatewayTimeout));
+        }
+        catch (RequestFaultException ex)
+        {
+            return Result.Failure(new Error("Messaging.Fault", ex.Message, StatusCodes.Status502BadGateway));
         }
     }
 }

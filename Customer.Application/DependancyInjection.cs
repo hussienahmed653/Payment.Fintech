@@ -1,4 +1,8 @@
-﻿namespace Customer.Application;
+﻿using Customer.Application.Messaging;
+using MassTransit;
+using Shared.Messaging;
+
+namespace Customer.Application;
 
 public static class DependancyInjection
 {
@@ -6,16 +10,21 @@ public static class DependancyInjection
     {
         services.AddMediatRService()
             .AddFluentValidationService()
-            .AddMapsterService();
-        services.AddHttpClient("PaymentGateway", client =>
-        {
-            client.BaseAddress = new Uri("https://localhost:7063/");
-        })
-        .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-        {
-            // السماح بشهادات SSL الخاصة بـ localhost أثناء التطوير Local Development
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-        }); 
+            .AddMapsterService()
+            .AddRabbitMqMessaging(
+                configuration,
+                configureBus: x =>
+                {
+                    x.AddConsumer<UpdateCustomerConsumer>();
+                    x.AddRequestClient<CreatePaymentMessage>(new Uri($"queue:{QueueNames.CreatePayment}"));
+                },
+                configureEndpoints: (context, cfg) =>
+                {
+                    cfg.ReceiveEndpoint(QueueNames.UpdateCustomer, e =>
+                    {
+                        e.ConfigureConsumer<UpdateCustomerConsumer>(context);
+                    });
+                });
         return services;
     }
     private static IServiceCollection AddMediatRService(this IServiceCollection services)
