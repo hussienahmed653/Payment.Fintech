@@ -82,9 +82,9 @@ public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
             if (response.Is(out Response<MessagingFaulted>? faulted))
             {
                 return Result.Failure(new Error(
-                    faulted.Message.Code,
-                    faulted.Message.Description,
-                    faulted.Message.StatusCode ?? StatusCodes.Status502BadGateway));
+                    faulted.Message.Error.Code,
+                    faulted.Message.Error.Description,
+                    faulted.Message.Error.StatusCode ?? StatusCodes.Status502BadGateway));
             }
 
             return Result.Success();
