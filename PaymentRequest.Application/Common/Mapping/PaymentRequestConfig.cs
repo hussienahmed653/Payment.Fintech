@@ -10,6 +10,7 @@ internal class PaymentRequestConfig : IRegister
         config.NewConfig<(Domain.Entities.PaymentRequest payment, PaymentGatewayResponse gateway), PayPaymentResponse>()
             .Map(dest => dest, src => src.payment)
             .Map(dest => dest.TransactionId, src => src.gateway.TransactionId);
+
         config.NewConfig<(Domain.Entities.PaymentRequest payment, string idempotency), PaymentTransaction>()
             //.Map(dest => dest, src => src.payment)
             .Map(dest => dest.Status, src => PaymentStatus.Processing)
@@ -17,7 +18,8 @@ internal class PaymentRequestConfig : IRegister
             .Map(dest => dest.PaymentRequestGuid, src => src.payment.GuidId)
             .Map(dest => dest.Amount, src => src.payment.Amount)
             .Map(dest => dest.IdemPotency, src => src.idempotency);
-        config.NewConfig<Domain.Entities.PaymentRequest, PaymentResponse>()
-            .Map(dest => dest.Status, src => src.Status.ToString());
+
+        config.NewConfig<(PaymentEnvelope request, PaymentResponse response), PaymentResponse>()
+            .Map(dest => dest, src => src.response);
     }
 }

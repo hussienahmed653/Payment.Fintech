@@ -57,8 +57,7 @@ public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
                 return Result.Failure<PaymentResponse>(paymentProviderResult.Error);
             }
 
-            var response = (request.Request, payment).Adapt<PaymentResponse>();
-            return Result.Success(response);
+            return Result.Success(payment);
         }
         catch
         {
@@ -77,7 +76,7 @@ public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
             var response = await client.GetResponse<MessagingCompleted, MessagingFaulted>(
                 message,
                 cancellationToken,
-                RequestTimeout.After(s: 30));
+                RequestTimeout.After(m: 2));
 
             if (response.Is(out Response<MessagingFaulted>? faulted))
             {
