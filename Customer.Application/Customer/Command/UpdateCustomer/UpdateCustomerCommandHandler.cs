@@ -3,9 +3,9 @@ using Shared.Sections;
 
 namespace Customer.Application.Customer.Command.UpdateCustomer;
 
-public class UpdateCustomerCommandHandler(ICustomerRepository merchantRepository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateCustomerCommand, Result<CustomerResponse>>
+public class UpdateCustomerCommandHandler(ICustomerRepository customerRepository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateCustomerCommand, Result<CustomerResponse>>
 {
-    private readonly ICustomerRepository _merchantRepository = merchantRepository;
+    private readonly ICustomerRepository _customerRepository = customerRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<Result<CustomerResponse>> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
@@ -13,18 +13,18 @@ public class UpdateCustomerCommandHandler(ICustomerRepository merchantRepository
         try
         {
             //await _unitOfWork.BeginTransactionAsync(cancellationToken);
-            if (await _merchantRepository.GetCustomerByGuidAsync(request.Request.payment.CustomerGuid, cancellationToken) is not { } merchant)
+            if (await _customerRepository.GetCustomerByGuidAsync((Guid)request.Request.payment.CustomerGuid, cancellationToken) is not { } customer)
                 return Result.Failure<CustomerResponse>(CustomerErrors.CustomerNotFound);
 
-            if (IsEmailChanged(request.Request.customer.Email, merchant.Email))
+            if (IsEmailChanged(request.Request.customer.Email, customer.Email))
             {
-                if (await _merchantRepository.EmailIsExistsAsync(request.Request.customer.Email, cancellationToken))
+                if (await _customerRepository.EmailIsExistsAsync(request.Request.customer.Email, cancellationToken))
                     return Result.Failure<CustomerResponse>(CustomerErrors.EmailDublicated);
             }
 
-            UpdatedProperty(merchant, request.Request.customer);
+            UpdatedProperty(customer, request.Request.customer);
 
-            await _merchantRepository.UpdateCustomerAsync(merchant);
+            await _customerRepository.UpdateCustomerAsync(customer);
 
             var TotalChanges = await _unitOfWork.SaveChangesAsync(cancellationToken);
             if (TotalChanges == 0)
@@ -33,7 +33,7 @@ public class UpdateCustomerCommandHandler(ICustomerRepository merchantRepository
                 return Result.Failure<CustomerResponse>(CustomerErrors.MultibleRowsAffected);
 
             //await _unitOfWork.CommitTransactionAsync(cancellationToken);
-            return Result.Success(merchant.Adapt<CustomerResponse>());
+            return Result.Success(customer.Adapt<CustomerResponse>());
         }
         catch (Exception ex)
         {
