@@ -4,7 +4,7 @@ using Shared.Messaging;
 
 namespace Customer.Application.Messaging;
 
-public class UpdateCustomerConsumer(IMediator mediator) : IConsumer<UpdateCustomerMessage>
+public class UpdateCustomerConsumer(IMediator mediator, IPublishEndpoint publishEndpoint) : IConsumer<UpdateCustomerMessage>
 {
     public async Task Consume(ConsumeContext<UpdateCustomerMessage> context)
     {
@@ -12,11 +12,14 @@ public class UpdateCustomerConsumer(IMediator mediator) : IConsumer<UpdateCustom
 
         if (result.IsFailure)
         {
-            await context.RespondAsync(new MessagingFaulted(
-                result.Error));
-            return;
+            await publishEndpoint.Publish(new MessagingFaulted(
+                result.Error), context.CancellationToken);
+            //await context.RespondAsync(new MessagingFaulted(
+            //    result.Error));
+            //return;
         }
 
-        await context.RespondAsync(new MessagingCompleted());
+        await publishEndpoint.Publish(new MessagingCompleted(), context.CancellationToken);
+        //await context.RespondAsync(new MessagingCompleted());
     }
 }

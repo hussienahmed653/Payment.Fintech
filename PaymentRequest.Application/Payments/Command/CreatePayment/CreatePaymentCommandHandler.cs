@@ -9,12 +9,14 @@ public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
                                          IMediator mediator,
                                          IPaymentTransactionRepository paymentTransactionRepository,
                                          IRequestClient<UpdateCustomerMessage> updateCustomerClient,
-                                         IRequestClient<InitiateDepositMessage> initiateDepositClient) : IRequestHandler<CreatePaymentCommand, Result<PaymentResponse>>
+                                         IRequestClient<InitiateDepositMessage> initiateDepositClient,
+                                         ISendEndpointProvider sendEndpointProvider) : IRequestHandler<CreatePaymentCommand, Result<PaymentResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMediator _mediator = mediator;
     private readonly IPaymentRepository _paymentRepository = paymentRepository;
     private readonly IPaymentTransactionRepository _paymentTransactionRepository = paymentTransactionRepository;
+    private readonly ISendEndpointProvider _sendEndpointProvider = sendEndpointProvider;
 
     public async Task<Result<PaymentResponse>> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
     {
@@ -23,17 +25,21 @@ public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
             var payment = await _paymentRepository.CreatePaymentRequestAsync(request.Request.payment, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var customerResult = await SendAsync(
-                updateCustomerClient,
-                new UpdateCustomerMessage(request.Request),
-                cancellationToken);
+            //Asynchronously send the UpdateCustomerMessage to the customer-update queue
+            var sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:customer-update"));
+            await sendEndpoint.Send(new UpdateCustomerMessage(request.Request), cancellationToken);
 
-            if (customerResult.IsFailure)
-            {
-                await _paymentRepository.UpdateStatus(payment.GuidId, PaymentStatus.Failed);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-                return Result.Failure<PaymentResponse>(customerResult.Error);
-            }
+            //var customerResult = await SendAsync(
+            //    updateCustomerClient,
+            //    new UpdateCustomerMessage(request.Request),
+            //    cancellationToken);
+
+            //if (customerResult.IsFailure)
+            //{
+            //    await _paymentRepository.UpdateStatus(payment.GuidId, PaymentStatus.Failed);
+            //    await _unitOfWork.SaveChangesAsync(cancellationToken);
+            //    return Result.Failure<PaymentResponse>(customerResult.Error);
+            //}
 
             var paymentTransactionResponse = await _mediator.Send(new PayPaymentCommand(payment.Reference, request.Request.transaction!.IdempotencyId), cancellationToken);
 
@@ -43,7 +49,7 @@ public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
                 return Result.Failure<PaymentResponse>(paymentTransactionResponse.Error);
             }
-
+            //Sync the payment status with the payment transaction status
             var paymentProviderResult = await SendAsync(
                 initiateDepositClient,
                 new InitiateDepositMessage(request.Request),
