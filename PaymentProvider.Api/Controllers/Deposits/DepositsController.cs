@@ -16,4 +16,9 @@ public class DepositsController(IMediator mediator) : ControllerBase
             ? Ok(result.Value) 
             : result.ToProblem();
     }
+    [HttpGet("")]
+    public IActionResult Get()
+    {
+        return Ok("PaymentProvider, Success");
+    }
 }

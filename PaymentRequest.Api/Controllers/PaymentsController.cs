@@ -18,7 +18,7 @@ public class PaymentsController(IMediator mediator) : ControllerBase
     [HttpGet("")]
     public async Task<IActionResult> Get()
     {
-        return Ok();
+        return Ok("OK");
     }
     [HttpPost("")]
     public async Task<IActionResult> Create([FromBody] CreatePaymentCommand command)

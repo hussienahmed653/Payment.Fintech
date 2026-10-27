@@ -21,6 +21,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapHealthChecks("/health");
 
 app.UseAuthentication();
 app.UseAuthorization();

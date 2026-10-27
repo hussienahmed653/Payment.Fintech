@@ -17,6 +17,12 @@
     <Project Path="Merchant.Domain/Merchant.Domain.csproj" Id="112336e9-e3fc-4ac3-a11f-b64b2b637457" />
     <Project Path="Merchant.Infrastructure/Merchant.Infrastructure.csproj" Id="bdfb9dc1-71a3-4ef2-8803-7c2b42e0604e" />
   </Folder>
+  <Folder Name="/Services/NotificationService/">
+    <Project Path="NotificationProvider.Api/NotificationProvider.Api.csproj" Id="ca92b7c9-4f6c-4142-881d-84d7d0266bae" />
+    <Project Path="NotificationProvider.Application/NotificationProvider.Application.csproj" Id="9e0754d3-39ee-4da1-95ab-d6b54ff417a8" />
+    <Project Path="NotificationProvider.Domain/NotificationProvider.Domain.csproj" Id="9706454c-319a-424f-aac1-7189535939c8" />
+    <Project Path="NotificationProvider.Infrastructure/NotificationProvider.Infrastructure.csproj" Id="f4b6a14a-2cf4-48c7-b3bd-b17ae376fdca" />
+  </Folder>
   <Folder Name="/Services/PaymentProvider/">
     <Project Path="PaymentProvider.Api/PaymentProvider.Api.csproj" Id="50cad75a-f7d8-47dc-8556-05a318ebe295" />
     <Project Path="PaymentProvider.Application/PaymentProvider.Application.csproj" Id="496ab2f4-a047-4f8c-98d5-c1edf49269f0" />
