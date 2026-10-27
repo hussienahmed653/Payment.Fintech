@@ -7,6 +7,6 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using System.Reflection;
 global using ValidationPipeline.Behaviors;
-
-
+global using ResultPattern.Abstraction;
+global using NotificationProvider.Application.Common.Interfaces.Processor;
 

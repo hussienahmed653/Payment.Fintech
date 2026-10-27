@@ -1,6 +1,4 @@
-﻿
-
-namespace NotificationProvider.Infrastructure;
+﻿namespace NotificationProvider.Infrastructure;
 
 public static class DependancyInjection
 {
@@ -8,9 +6,15 @@ public static class DependancyInjection
     {
         services.AddScoped<IUnitOfWork, UnitOfWorkRepository>();
 
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(connectionString));
+        var connectionString = configuration.GetConnectionString("MongoDbConnection");
+        var databaseName = configuration["MongoDbSettings:DatabaseName"];
+        services.AddSingleton<IMongoClient>(sp => new MongoClient(connectionString));
+        services.AddScoped(sp =>
+        {
+            var client = sp.GetRequiredService<IMongoClient>();
+            return client.GetDatabase(databaseName);
+        });
+        services.AddScoped<ApplicationDbContext>();
         return services;
     }
 }

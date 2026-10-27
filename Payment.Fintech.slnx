@@ -23,6 +23,10 @@
     <Project Path="NotificationProvider.Domain/NotificationProvider.Domain.csproj" Id="9706454c-319a-424f-aac1-7189535939c8" />
     <Project Path="NotificationProvider.Infrastructure/NotificationProvider.Infrastructure.csproj" Id="f4b6a14a-2cf4-48c7-b3bd-b17ae376fdca" />
   </Folder>
+  <Folder Name="/Services/NotificationService/Integrations/">
+    <Project Path="Notification.Integration.Email/Notification.Integration.Email.csproj" Id="ffe38ef2-117a-4c32-a10b-127214a43e74" />
+    <Project Path="Notification.integration.SMS/Notification.integration.SMS.csproj" Id="029d9984-1c77-462c-a847-6de000087523" />
+  </Folder>
   <Folder Name="/Services/PaymentProvider/">
     <Project Path="PaymentProvider.Api/PaymentProvider.Api.csproj" Id="50cad75a-f7d8-47dc-8556-05a318ebe295" />
     <Project Path="PaymentProvider.Application/PaymentProvider.Application.csproj" Id="496ab2f4-a047-4f8c-98d5-c1edf49269f0" />

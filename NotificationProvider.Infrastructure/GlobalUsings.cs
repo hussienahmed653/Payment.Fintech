@@ -2,17 +2,9 @@
 global using Microsoft.EntityFrameworkCore.Storage;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
-global using NotificationProvider.Infrastructure.UnitOfWork;
+global using NotificationProvider.Application.Common.Interfaces.FactorySelector;
+global using NotificationProvider.Application.Common.Interfaces.Processor;
 global using NotificationProvider.Application.Common.Interfaces.UnitOfWork;
 global using NotificationProvider.Infrastructure.Context;
-
-
-
-
-
-
-
-
-
-
-
+global using NotificationProvider.Infrastructure.UnitOfWork;
+global using MongoDB.Driver;
