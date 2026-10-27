@@ -2,11 +2,14 @@
 global using FluentValidation.AspNetCore;
 global using Mapster;
 global using MapsterMapper;
+global using MassTransit;
 global using MediatR;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
+global using NotificationProvider.Application.Common.Interfaces.Processor;
+global using ResultPattern.Abstraction;
+global using Shared.Messaging;
 global using System.Reflection;
 global using ValidationPipeline.Behaviors;
-global using ResultPattern.Abstraction;
-global using NotificationProvider.Application.Common.Interfaces.Processor;
-
+global using NotificationProvider.Application.SendNotification;
+global using Shared.Sections;

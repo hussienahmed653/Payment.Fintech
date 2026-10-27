@@ -12,9 +12,5 @@ public class InitiateDepositCommandHandler(ISelectorFactory selectorFactory) : I
         var initiateDepositRequest = request.request.Adapt<InitiateDepositRequest>()!;
         var provider = _selectorFactory.Select((int)initiateDepositRequest.Payer.Type);
         return await provider.MakeRequest(initiateDepositRequest);
-
-        //return result.IsSuccess
-        //    ? Result.Success(result.Value)
-        //    : Result.Failure<InitiateDepositResponse>(result.Error);
     }
 }

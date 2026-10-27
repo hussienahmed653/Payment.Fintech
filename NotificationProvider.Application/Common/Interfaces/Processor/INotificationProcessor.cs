@@ -2,5 +2,5 @@
 
 public interface INotificationProcessor
 {
-    Task<Result<object>> MakeNotification(object request);
+    Task<Result<object>> MakeNotification(NotificationRequestSection request);
 }
