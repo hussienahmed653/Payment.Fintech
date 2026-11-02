@@ -29,4 +29,13 @@
     <ProjectReference Include="..\NotificationProvider.Application\NotificationProvider.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Channels\Email\" />
+    <Folder Include="Messaging\Consumers\" />
+    <Folder Include="Messaging\RabbitMQ\" />
+    <Folder Include="Channels\SMS\" />
+    <Folder Include="Templates\Email\" />
+    <Folder Include="Templates\SMS\" />
+  </ItemGroup>
+
 </Project>

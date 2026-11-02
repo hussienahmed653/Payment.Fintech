@@ -35,7 +35,9 @@
   <ItemGroup>
     <Folder Include="Common\Contracts\" />
     <Folder Include="Common\Mapping\" />
+    <Folder Include="Deliveries\Commands\" />
     <Folder Include="Errors\" />
+    <Folder Include="Notifications\Commands\" />
   </ItemGroup>
 
 </Project>

@@ -8,3 +8,5 @@ global using NotificationProvider.Application.Common.Interfaces.UnitOfWork;
 global using NotificationProvider.Infrastructure.Context;
 global using NotificationProvider.Infrastructure.UnitOfWork;
 global using MongoDB.Driver;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using NotificationProvider.Domain.Entities;

@@ -1,6 +1,6 @@
 ﻿namespace NotificationProvider.Domain.Enums;
 
-public enum ChannelEnums
+public enum NotificationChannel
 {
     Email,
     SMS
