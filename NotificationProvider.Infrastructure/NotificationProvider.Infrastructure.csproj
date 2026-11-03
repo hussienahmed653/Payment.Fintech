@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Mapster" Version="10.0.14" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="9.2.5" />
     <PackageReference Include="MediatR" Version="14.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.13" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.14" />
@@ -27,11 +28,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NotificationProvider.Application\NotificationProvider.Application.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Channels\Email\" />
-    <Folder Include="Messaging\Consumers\" />
     <Folder Include="Messaging\RabbitMQ\" />
     <Folder Include="Channels\SMS\" />
     <Folder Include="Templates\Email\" />

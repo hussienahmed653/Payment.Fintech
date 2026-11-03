@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 using PaymentRequest.Application.Payments.Command.PayPayment;
+using Shared.Events.Payments;
 using Shared.Messaging;
 
 namespace PaymentRequest.Application.Payments.Command.CreatePayment;
@@ -10,20 +11,30 @@ public class CreatePaymentCommandHandler(IUnitOfWork unitOfWork,
                                          IPaymentTransactionRepository paymentTransactionRepository,
                                          IRequestClient<UpdateCustomerMessage> updateCustomerClient,
                                          IRequestClient<InitiateDepositMessage> initiateDepositClient,
-                                         ISendEndpointProvider sendEndpointProvider) : IRequestHandler<CreatePaymentCommand, Result<PaymentResponse>>
+                                         ISendEndpointProvider sendEndpointProvider,
+                                         IPublishEndpoint publishEndpoint) : IRequestHandler<CreatePaymentCommand, Result<PaymentResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMediator _mediator = mediator;
     private readonly IPaymentRepository _paymentRepository = paymentRepository;
     private readonly IPaymentTransactionRepository _paymentTransactionRepository = paymentTransactionRepository;
     private readonly ISendEndpointProvider _sendEndpointProvider = sendEndpointProvider;
+    private readonly IPublishEndpoint _publishEndpoint = publishEndpoint;
 
     public async Task<Result<PaymentResponse>> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
     {
         try
         {
             var payment = await _paymentRepository.CreatePaymentRequestAsync(request.Request.payment, cancellationToken);
+
+            var paymentRequestCreatedEvent = payment.Adapt<PaymentRequestCreatedIntegrationEvent>() with
+            {
+                EventId = Guid.NewGuid(),
+                OccurredOn = DateTimeOffset.UtcNow
+            };
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await _publishEndpoint.Publish(paymentRequestCreatedEvent, cancellationToken);
 
             //Asynchronously send the UpdateCustomerMessage to the customer-update queue
             var sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:customer-update"));

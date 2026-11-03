@@ -1,4 +1,5 @@
 ﻿using Shared;
+using Shared.Events.Payments;
 using Shared.Sections;
 
 namespace PaymentRequest.Application.Common.Mapping;
@@ -21,5 +22,16 @@ internal class PaymentRequestConfig : IRegister
 
         config.NewConfig<(PaymentEnvelope request, PaymentResponse response), PaymentResponse>()
             .Map(dest => dest, src => src.response);
+
+        config.NewConfig<PaymentResponse, PaymentRequestCreatedIntegrationEvent>()
+            //.Map(dest => dest.EventId, src => Guid.NewGuid())
+            .Map(dest => dest.PaymentRequestId, src => src.GuidId)
+            .Map(dest => dest.CustomerId, src => src.CustomerId)
+            .Map(dest => dest.MerchantId, src => src.MerchantId)
+            .Map(dest => dest.Amount, src => src.Amount)
+            .Map(dest => dest.Currency, src => src.Currency.ToString());
+            //.Map(dest => dest.OccurredOn, src => DateTime.UtcNow);
+
+        //var paymentRequestCreatedEvent = request.Request.payment.Adapt<PaymentRequestCreatedIntegrationEvent>();
     }
 }
