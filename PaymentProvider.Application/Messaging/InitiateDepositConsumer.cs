@@ -9,7 +9,7 @@ public class InitiateDepositConsumer(IMediator mediator) : IConsumer<InitiateDep
 {
     public async Task Consume(ConsumeContext<InitiateDepositMessage> context)
     {
-        var result = await mediator.Send(new InitiateDepositCommand(context.Message.Envelope), context.CancellationToken);
+        var result = await mediator.Send(new InitiateDepositCommand { request = context.Message.Envelope }, context.CancellationToken);
 
         if (result.IsFailure)
         {

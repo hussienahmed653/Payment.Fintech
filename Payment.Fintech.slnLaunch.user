@@ -3,17 +3,7 @@
     "Name": "New Profile",
     "Projects": [
       {
-        "Path": "Customer.Api\\Customer.Api.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
-      },
-      {
         "Path": "PaymentRequest.Api\\PaymentRequest.Api.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
-      },
-      {
-        "Path": "Merchant.Api\\Merchant.Api.csproj",
         "Action": "Start",
         "DebugTarget": "http"
       },
@@ -23,9 +13,16 @@
         "DebugTarget": "http"
       },
       {
+        "Path": "Customer.Api\\Customer.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Merchant.Api\\Merchant.Api.csproj",
+        "Action": "Start"
+      },
+      {
         "Path": "NotificationProvider.Api\\NotificationProvider.Api.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
+        "Action": "Start"
       }
     ]
   }

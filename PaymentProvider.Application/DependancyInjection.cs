@@ -11,20 +11,8 @@ public static class DependancyInjection
     {
         services.AddMediatRService()
             .AddFluentValidationService()
-            .AddMapsterService()
-            .AddRabbitMqMessaging(
-                configuration,
-                configureBus: x =>
-                {
-                    x.AddConsumer<InitiateDepositConsumer>();
-                },
-                configureEndpoints: (context, cfg) =>
-                {
-                    cfg.ReceiveEndpoint(QueueNames.InitiateDeposit, e =>
-                    {
-                        e.ConfigureConsumer<InitiateDepositConsumer>(context);
-                    });
-                });
+            .AddMapsterService();
+
         return services;
     }
     private static IServiceCollection AddMediatRService(this IServiceCollection services)

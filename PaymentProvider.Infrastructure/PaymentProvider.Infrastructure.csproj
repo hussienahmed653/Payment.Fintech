@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Mapster" Version="10.0.14" />
+    <PackageReference Include="MassTransit" Version="9.2.5" />
     <PackageReference Include="MediatR" Version="14.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.13" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.14" />
@@ -29,6 +30,7 @@
     <ProjectReference Include="..\PaymentProvider.Application\PaymentProvider.Application.csproj" />
     <ProjectReference Include="..\PaymentProvider.Integration.MMO\PaymentProvider.Integration.MMO.csproj" />
     <ProjectReference Include="..\PaymentProvider.Integration.PawaPay\PaymentProvider.Integration.PawaPay.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>
