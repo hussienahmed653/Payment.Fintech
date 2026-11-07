@@ -7,24 +7,8 @@ public static class DependancyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IUnitOfWork, UnitOfWorkRepository>();
-        services.AddRabbitMqMessaging(configuration, configureBus:
-            x =>
-            {
-                x.AddConsumer<PaymentRequestCreatedConsumer>();
-                x.AddConsumer<PaymentRequestSucceededConsumer>();
-            },
-            configureEndpoints: (context, cfg) =>
-            {
-                cfg.ReceiveEndpoint(QueueNames.CreatePaymentRequest, e =>
-                {
-                    e.ConfigureConsumer<PaymentRequestCreatedConsumer>(context);
-                });
-                cfg.ReceiveEndpoint(QueueNames.SuccessPaymentRequest, e =>
-                {
-                    e.ConfigureConsumer<PaymentRequestSucceededConsumer>(context);
-                });
-            });
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         var connectionString = configuration.GetConnectionString("MongoDbConnection");
         var databaseName = configuration["MongoDbSettings:DatabaseName"];
@@ -34,7 +18,27 @@ public static class DependancyInjection
             var client = sp.GetRequiredService<IMongoClient>();
             return client.GetDatabase(databaseName);
         });
-        services.AddScoped<ApplicationDbContext>();
+
+        services.AddScoped<IUnitOfWork, UnitOfWorkRepository>();
+        services.AddRabbitMqMessaging(configuration, configureBus:
+            x =>
+            {
+                x.AddConsumer<PaymentRequestCreatedConsumer>();
+                x.AddConsumer<PaymentRequestSucceededConsumer>();
+            },
+            configureEndpoints: (context, cfg) =>
+            {
+                //cfg.ReceiveEndpoint(QueueNames.CreatePaymentRequest, e =>
+                //{
+                //    e.ConfigureConsumer<PaymentRequestCreatedConsumer>(context);
+                //});
+                //cfg.ReceiveEndpoint(QueueNames.SuccessPaymentRequest, e =>
+                //{
+                //    e.ConfigureConsumer<PaymentRequestSucceededConsumer>(context);
+                //});
+                cfg.ConfigureEndpoints(context);
+            });
+
         return services;
     }
 }

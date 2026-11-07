@@ -1,6 +1,7 @@
 ﻿namespace Shared.Events.Payments;
 
 public sealed record PaymentRequestSucceededIntegrationEvent(
+    Guid CorrelationId,
     Guid EventId,
     Guid PaymentRequestId,
     Guid CustomerId,

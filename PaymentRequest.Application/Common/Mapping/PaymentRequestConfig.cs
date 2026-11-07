@@ -26,8 +26,9 @@ internal class PaymentRequestConfig : IRegister
         config.NewConfig<PaymentResponse, PaymentRequestCreatedIntegrationEvent>()
             //.Map(dest => dest.EventId, src => Guid.NewGuid())
             .Map(dest => dest.PaymentRequestId, src => src.GuidId)
-            .Map(dest => dest.CustomerId, src => src.CustomerId)
-            .Map(dest => dest.MerchantId, src => src.MerchantId)
+            .Map(dest => dest.CorrelationId, src => Guid.CreateVersion7())
+            .Map(dest => dest.CustomerId, src => src.CustomerGuid)
+            .Map(dest => dest.MerchantId, src => src.MerchantGuid)
             .Map(dest => dest.Amount, src => src.Amount)
             .Map(dest => dest.Currency, src => src.Currency.ToString());
             //.Map(dest => dest.OccurredOn, src => DateTime.UtcNow);
